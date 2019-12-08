@@ -1,0 +1,28 @@
+﻿#top {
+	height:3em; 
+	vertical-align:middle;
+	background-color: #ddd;
+	width:100%;
+}
+
+#left {
+	
+	width:20em;
+	background-color:#aaa;
+	display:inline-block;
+	height:auto;
+	min-height:10em;
+}
+
+#content {
+	width:auto;
+	display:inline-block;
+	vertical-align:top;
+}
+
+#footer {
+	height:3em; 
+	vertical-align:middle;
+	background-color: #ddd;
+	width:100%;
+}
