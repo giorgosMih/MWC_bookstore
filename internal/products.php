@@ -1,4 +1,13 @@
-<h2>Books</h2>
-<p>
-This is the  page about books.
-</p>
+<?php 
+$sql = "select * from product";
+if( $stmt = $mysqli->prepare($sql) ) {
+	$stmt->execute();
+	$books = $stmt->get_result();
+}
+
+foreach ($books as $index => $row) {
+	var_dump($row);
+	echo '<br/>';
+	echo '<br/>';
+}
+?>

@@ -25,11 +25,12 @@ if( ! isset($_SESSION['is_admin'])) {
 
     <!-- Custom styles for this template -->
     <link href="./bootstrap/dashboard.css" rel="stylesheet">
+    <link href="./css/custom.css" rel="stylesheet">
     <script src="./js/ajax.js"></script>
   </head>
 <body>
     <header>
-      <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-info">
+      <nav class="navbar navbar-expand-<?php if($_SESSION['username']!='?') echo "lg"; else echo "md";?> navbar-dark fixed-top bg-info">
         <a class="navbar-brand" href="#">Bookstore</a>
         <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -89,7 +90,7 @@ if( ! isset($_SESSION['is_admin'])) {
     </header>
 <div class="container-fluid">
       <div class="row">
-<main id='maincontent' role="main" class="pb-5 pt-3 px-2">
+<main id='maincontent' role="main" class="w-100 pb-5 pt-3 px-2">
 <?php
 if( ! isset($_REQUEST['p'])) {
 	$_REQUEST['p']='start';

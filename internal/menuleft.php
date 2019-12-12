@@ -1,5 +1,5 @@
-<h3>Book Categories</h3>
-<ul class="nav nav-pills flex-column">
+<h3 class="text-center">Select a category or search for a book from the to bar's search box.</h3>
+<div class="row mx-0">
 <?php
 $sql = 'select * from category order by Name';
 
@@ -8,14 +8,14 @@ if (! ($res = $mysqli->query($sql))) {
  			$mysqli->errno . ") " . $mysqli->error;
 } else {
 	while ($row = $res->fetch_assoc()) {
-		print "<li class='nav-item'><a class='nav-link' href='index.php?p=catinfo&catid=$row[ID]'>".
-				"$row[Name]</a></li>";
+		print "
+		<div class='col-6 col-sm-4 col-md-3 my-1'>
+			<a class='category-tile nav-link text-truncate text-center' href='index.php?p=catinfo&catid=$row[ID]'>
+				$row[Name]
+			</a>
+		</div>
+		";
 	}
 }
-
-
-
 ?>
-
-</ul>
-
+</div>
