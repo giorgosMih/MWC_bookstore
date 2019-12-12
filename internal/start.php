@@ -1,4 +1,3 @@
-<p>
-This is the start page
-
-</p>
+<?php 
+require "internal/menuleft.php";
+?>

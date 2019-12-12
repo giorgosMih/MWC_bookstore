@@ -1,8 +1,8 @@
 <?php
-$user='';
+$user='root';
 $pass='';
 $host='localhost';
-$db = 'adise_lab5';
+$db = 'bookstore';
 
 $mysqli = new mysqli($host, $user, $pass, $db);
 if ($mysqli->connect_errno) {

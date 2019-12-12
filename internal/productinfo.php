@@ -10,7 +10,11 @@ if( $stmt = $mysqli->prepare($sql) ) {
 	while ($row = $result->fetch_assoc()) {
 		print "<b>$row[Title]</b>".
 		"<p>$row[Description]</p>".
-		"<input id='qty' type='number' value='1' name='qty'> <button class='btn btn-primary' id='btn_add_cart' onclick='add_cart($row[ID])'>Add to cart</button>";
+		"<form onsubmit='add_cart(event, $row[ID])'>
+			<input id='qty' type='number' min='1' step='1' value='1' name='qty'>
+			<button type='submit' class='btn btn-primary' id='btn_add_cart'>Add to cart</button>
+		</form>
+		";
 	}
 
 }
@@ -20,7 +24,9 @@ if( $stmt = $mysqli->prepare($sql) ) {
 <div id='response'></div>
 <script>
 var xmlhttp;
-function add_cart(pid) {
+function add_cart(e, pid) {
+	e.preventDefault()
+	
 	xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = showresponse;
 	var a = document.getElementById('qty').value;
