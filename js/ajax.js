@@ -17,7 +17,6 @@ function show_customers() {
 	$.ajax('ajax/show_allusers_json.php', { success: show_customers_json} );
 }
 
-
 function show_customers_json(x,y,z) {
 	var o = JSON.parse(x);
 	$('#maincontent').html('<table class="table" id="custtable"><thead><tr><th>ID</th><th>Fname</th><th>Lname</th></tr></thead><tbody></tbody></table>');
@@ -31,4 +30,3 @@ function show_customers_json(x,y,z) {
 		$('#custtable TBODY').append('<tr><td>'+ x.ID+'</td><td>'+x.Fname+'</td><td>'+x.Lname+'</td></tr>');
 	});
 }
-

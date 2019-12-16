@@ -25,7 +25,9 @@ if( ! isset($_SESSION['is_admin'])) {
 
     <!-- Custom styles for this template -->
     <link href="./bootstrap/dashboard.css" rel="stylesheet">
+    <link href="./css/datatables.min.css" rel="stylesheet">
     <link href="./css/custom.css" rel="stylesheet">
+    <link href="./css/materialdesignicons.min.css" rel="stylesheet">
     <script src="./js/ajax.js"></script>
   </head>
 <body>
@@ -39,6 +41,9 @@ if( ! isset($_SESSION['is_admin'])) {
         <div class="collapse navbar-collapse" id="navbarsExampleDefault">
           <ul class="navbar-nav mr-auto">
           <?php if($_SESSION['is_admin']):?>
+            <li class="nav-item<?php if($_SERVER['QUERY_STRING'] == 'p=book_manage') echo ' active';?>">
+              <a class="nav-link" href="?p=book_manage">Book Management</a>
+            </li>
             <li class="nav-item<?php if($_SERVER['QUERY_STRING'] == 'p=orders_manage') echo ' active';?>">
               <a class="nav-link" href="?p=orders_manage">Order Management</a>
             </li>
@@ -81,10 +86,12 @@ if( ! isset($_SESSION['is_admin'])) {
           <?php endif;?>
           <?php endif;?>
 			</ul>
+    <?php if(!$_SESSION['is_admin']): ?>
       <form class="form-inline my-2 my-lg-0">
         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
       </form>
+    <?php endif; ?>
         </div>
       </nav>
     </header>
@@ -97,7 +104,7 @@ if( ! isset($_REQUEST['p'])) {
 }
 $p = $_REQUEST['p'];
 
-$pages = array('start','shopinfo','login','do_login','after_login','logout','myinfo','contact','products','cart','catinfo','productinfo','add_cart','empty_cart','buy_cart', 'orders_manage');
+$pages = array('start','shopinfo','login','do_login','after_login','logout','myinfo','contact','products','cart','catinfo','productinfo','add_cart','empty_cart','buy_cart', 'orders_manage', 'book_manage');
 
 $ok=false;
 foreach($pages as $pp) {
@@ -133,5 +140,7 @@ if(! $ok) {
     <script src="./bootstrap/jquery-3.2.1.min.js"></script>
     <script src="./bootstrap/popper.min.js"></script>
     <script src="./bootstrap/bootstrap.min.js"></script>
+    <script src="./js/datatables.min.js"></script>
+    <script src="./js/custom.js"></script>
   </body>
 </html>

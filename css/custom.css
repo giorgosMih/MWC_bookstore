@@ -31,3 +31,17 @@
 	border: 1px outset #e0e0e0;
 	background-color: #f0efed;
 }
+
+.btn-book-delete, .btn-book-edit{
+	padding: 0;
+}
+.btn-book-edit:after{
+	content: url('../img/controls/edit.png');
+}
+.btn-book-delete:after{
+	content: url('../img/controls/delete.png');
+}
+
+.book-description-truncate{
+	cursor: pointer;
+}
