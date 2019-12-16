@@ -1,13 +1,8 @@
 <?php
-//$user='root';
-//$pass='';
-//$host='localhost';
-//$db = 'bookstore';
-
-$user='bookstore_user';
-$pass='b00k$t0rE';
+$user='root';
+$pass='';
 $host='localhost';
-$db = 'bookstore_db';
+$db = 'bookstore';
 
 
 $mysqli = new mysqli($host, $user, $pass, $db);

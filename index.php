@@ -27,7 +27,7 @@ if( ! isset($_SESSION['is_admin'])) {
     <link href="./bootstrap/dashboard.css" rel="stylesheet">
     <link href="./css/datatables.min.css" rel="stylesheet">
     <link href="./css/custom.css" rel="stylesheet">
-    <link href="./css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="./css/toastr.min.css" rel="stylesheet">
     <script src="./js/ajax.js"></script>
   </head>
 <body>
@@ -141,6 +141,7 @@ if(! $ok) {
     <script src="./bootstrap/popper.min.js"></script>
     <script src="./bootstrap/bootstrap.min.js"></script>
     <script src="./js/datatables.min.js"></script>
+    <script src="./js/toastr.min.js"></script>
     <script src="./js/custom.js"></script>
   </body>
 </html>
