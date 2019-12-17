@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Φιλοξενητής: 127.0.0.1
--- Χρόνος δημιουργίας: 12 Δεκ 2019 στις 15:40:35
+-- Χρόνος δημιουργίας: 17 Δεκ 2019 στις 16:28:13
 -- Έκδοση διακομιστή: 10.4.10-MariaDB
 -- Έκδοση PHP: 7.3.12
 
@@ -79,6 +79,14 @@ CREATE TABLE `author` (
   `first_name` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Άδειασμα δεδομένων του πίνακα `author`
+--
+
+INSERT INTO `author` (`ID`, `last_name`, `first_name`) VALUES
+(1, 'Papadopoulos', 'Nikos'),
+(2, 'Georgiadis', 'George');
+
 -- --------------------------------------------------------
 
 --
@@ -88,7 +96,7 @@ CREATE TABLE `author` (
 CREATE TABLE `category` (
   `ID` int(11) NOT NULL,
   `Name` varchar(200) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Άδειασμα δεδομένων του πίνακα `category`
@@ -123,15 +131,15 @@ CREATE TABLE `customer` (
   `uname` varchar(30) DEFAULT NULL,
   `passwd_enc` varchar(42) DEFAULT NULL,
   `is_admin` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Άδειασμα δεδομένων του πίνακα `customer`
 --
 
 INSERT INTO `customer` (`ID`, `Fname`, `Lname`, `Address`, `Phone`, `uname`, `passwd_enc`, `is_admin`) VALUES
-(11, 'nikos1', 'dvsdvs', 'Skrra', '30231401111145', 'admin', '*E6CC90B878B948C35E92B003C792C46C58C4AF40', 1),
-(10, 'Kostas', 'Nikopoulos', 'Ampelokipwn 4', '464577777777', 'user', '*E6CC90B878B948C35E92B003C792C46C58C4AF40', 0);
+(10, 'Kostas', 'Nikopoulos', 'Ampelokipwn 4', '464577777777', 'user', '*E6CC90B878B948C35E92B003C792C46C58C4AF40', 0),
+(11, 'nikos1', 'dvsdvs', 'Skrra', '30231401111145', 'admin', '*E6CC90B878B948C35E92B003C792C46C58C4AF40', 1);
 
 -- --------------------------------------------------------
 
@@ -144,17 +152,17 @@ CREATE TABLE `orderdetails` (
   `Orders` int(11) DEFAULT NULL,
   `Quantity` int(11) DEFAULT NULL,
   `Product` int(11) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Άδειασμα δεδομένων του πίνακα `orderdetails`
 --
 
 INSERT INTO `orderdetails` (`ID`, `Orders`, `Quantity`, `Product`) VALUES
-(78, 15, 1, 9),
-(77, 15, 3, 12),
-(76, 14, 1, 3),
 (75, 14, 1, 1),
+(76, 14, 1, 3),
+(77, 15, 3, 12),
+(78, 15, 1, 9),
 (79, 16, 2, 8),
 (80, 16, 1, 9),
 (81, 16, 1, 4),
@@ -551,15 +559,15 @@ CREATE TABLE `orders` (
   `ID` int(11) NOT NULL,
   `Customer` int(11) DEFAULT NULL,
   `oDate` date DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Άδειασμα δεδομένων του πίνακα `orders`
 --
 
 INSERT INTO `orders` (`ID`, `Customer`, `oDate`) VALUES
-(15, 11, '2011-12-21'),
 (14, 10, '2011-12-21'),
+(15, 11, '2011-12-21'),
 (16, 11, '2017-10-25'),
 (17, 11, '2017-10-25'),
 (18, 11, '2017-10-25'),
@@ -823,30 +831,43 @@ CREATE TABLE `product` (
   `author` int(11) NOT NULL,
   `Description` varchar(500) DEFAULT NULL,
   `Price` float DEFAULT NULL,
+  `stock` int(11) UNSIGNED NOT NULL DEFAULT 0,
   `Category` int(11) DEFAULT NULL,
-  `image` text NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `image` text NOT NULL DEFAULT 'products/empty.png'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Άδειασμα δεδομένων του πίνακα `product`
 --
 
-INSERT INTO `product` (`ID`, `Title`, `author`, `Description`, `Price`, `Category`, `image`) VALUES
-(1, 'Sams Teach Yourself SQL in 10 Minutes (3rd Edition)', 0, 'Sams Teach Yourself SQL in 10 Minutes has established itself as the gold standard for introductory SQL books, offering a fast-paced accessible tutorial to the major themes and techniques involved in applying the SQL language. Forta\'s examples are clear and his writing style is crisp and concise. As with earlier editions, this revision includes coverage of current versions of all major commercial SQL platforms.', 15, 3, 'prod_2.png'),
-(2, 'Fundamentals of Database Systems', 0, 'This introduction to database systems offers a comprehensive approach, focusing on database design, database use, and implementation of database applications and database management systems.', 30, 3, 'prod_3.png'),
-(3, 'Database Systems: The Complete Book', 0, 'Clear explanations of theory and design, broad coverage of models and real systems, and an up-to-date introduction to modern database technologies result in a leading introduction to database systems. Intended for computer science majors, Fundamentals of Database Systems, 6/e emphasizes math models, design issues, relational algebra, and relational calculus.', 35, 3, 'prod_1.png'),
-(4, 'Java In A Nutshell, 5th Edition', 0, 'With more than 700,000 copies sold to date, Java in a Nutshell from O\'Reilly is clearly the favorite resource amongst the legion of developers and programmers using Java technology. And now, with the release of the 5.0 version of Java, O\'Reilly has given the book that defined the \"in a Nutshell\" category another impressive tune-up. ', 30, 1, 'prod_1.png'),
-(5, 'Essential C# 4.0', 0, 'Essential C# 4.0 is a well-organized,no-fluff guide to all versions of C# for programmers at all levels of C# experience. This fully updated edition shows how to make the most of C# 4.0’s new features and programming patterns to write code that is simple, yet powerful.', 40, 1, 'prod_3.png'),
-(6, 'PHP and MySQL Web Development ', 0, 'The PHP server-side scripting language and the MySQL database management system (DBMS) make a potent pair. Both are open-source products--free of charge for most purposes--remarkably strong, and capable of handling all but the most enormous transaction loads. Both are supported by large, skilled, and enthusiastic communities of architects, programmers, and designers.', 35, 1, 'prod_1.png'),
-(7, 'Unix in a Nutshell, Fourth Edition', 0, 'Unix in a Nutshell is the standard desktop reference, without question. (Manpages come in a close second.) With a clean layout and superior command tables available at a glance, O\'Reilly\'s third edition of Nutshell is an essential to own.', 25, 2, 'prod_1.png'),
-(8, 'Windows 7: The Missing Manual', 0, 'In early reviews, geeks raved about Windows 7. But if you\'re an ordinary mortal, learning what this new system is all about will be challenging. Fear not: David Pogue\'s Windows 7: The Missing Manual comes to the rescue. Like its predecessors, this book illuminates its subject with reader-friendly insight, plenty of wit, and hardnosed objectivity for beginners as well as veteran PC users. ', 25, 2, 'prod_3.png'),
-(9, 'Understanding the Linux Kernel, Third Edition', 0, 'In order to thoroughly understand what makes Linux tick and why it works so well on a wide variety of systems, you need to delve deep into the heart of the kernel. The kernel handles all interactions between the CPU and the external world, and determines which programs will share processor time, in what order. It manages limited memory so well that hundreds of processes can share the system efficiently, and expertly organizes data transfers so that the CPU isn\'t kept waiting any longer than nece', 30, 2, 'prod_1.png'),
-(10, 'TCP/IP Illustrated, Vol. 1: The Protocols ', 0, 'TCP/IP Illustrated, Volume 1: The Protocols is an excellent text that provides encyclopedic coverage of the TCP/IP protocol suite. What sets this book apart from others on this subject is the fact that the author supplements all of the discussion with data collected via diagnostic programs; thus, it is possible to \"watch\" the protocols in action in a real situation. Also, the diagnostic tools involved are publicly available; the reader has the opportunity to play along at home. This offers the r', 50, 4, 'prod_3.png'),
-(11, 'CCNA: Cisco Certified Network Associate Study Guide', 0, 'Cisco networking authority Todd Lammle has completely updated this new edition to cover all of the exam objectives for the latest version of the CCNA exam. Todd’s straightforward style provides lively examples, easy-to-understand analogies, and real-world scenarios that will not only help you prepare for the exam, but also give you a solid foundation as a Cisco networking professional.', 50, 4, 'prod_3.png'),
-(12, 'Network Security Essentials: Applications and Standards (4th Edition)', 0, 'Wiliiam Stallings\' Network Security: Applications and Standards, 4/e is a practical survey of network security applications and standards, with unmatched support for instructors and students.', 60, 4, 'prod_2.png'),
-(13, 'Learning Web Design: A Beginner\'s Guide to (X)HTML, StyleSheets, and Web Graphics', 0, 'Everything you need to know to create professional web sites is right here. Learning Web Design  starts from the beginning -- defining how the Web and web pages work -- and builds from there. By the end of the book, you\'ll have the skills to create multi-column CSS layouts with optimized graphic files, and you\'ll know how to get your pages up on the Web.\r\nEverything you need to know to create professional web sites is right here. Learning Web Design  starts from the beginning -- defining how the', 40, 5, 'prod_2.png'),
-(14, 'Beginning Web Programming with HTML, XHTML, and CSS', 0, 'This beginning guide reviews HTML and also introduces you to using XHTML for the structure of a web page and cascading style sheets (CSS) for controlling how a document should appear on a web page. You?ll learn how to take advantage of the latest features of browsers while making sure that your pages still work in older, but popular, browsers. By incorporating usability and accessibility, you?ll be able to write professional-looking and well-coded web pages that use the latest technologies. ', 35, 5, 'prod_3.png'),
-(15, 'Programming the World Wide Web', 0, 'Programming the World Wide Web 2010 provides a comprehensive introduction to the tools and skills required for both client- and server-side programming, teaching students how to develop platform-independent sites using the most current Web development technology', 50, 5, 'prod_3.png');
+INSERT INTO `product` (`ID`, `Title`, `author`, `Description`, `Price`, `stock`, `Category`, `image`) VALUES
+(1, 'Sams Teach Yourself SQL in 10 Minutes (3rd Edition)', 2, 'Sams Teach Yourself SQL in 10 Minutes has established itself as the gold standard for introductory SQL books, offering a fast-paced accessible tutorial to the major themes and techniques involved in applying the SQL language. Forta\'s examples are clear and his writing style is crisp and concise. As with earlier editions, this revision includes coverage of current versions of all major commercial SQL platforms.', 15, 2, 3, 'products/prod_2.png'),
+(2, 'Fundamentals of Database Systems', 2, 'This introduction to database systems offers a comprehensive approach, focusing on database design, database use, and implementation of database applications and database management systems.', 30, 3, 3, 'products/prod_3.png'),
+(3, 'Database Systems: The Complete Book', 2, 'Clear explanations of theory and design, broad coverage of models and real systems, and an up-to-date introduction to modern database technologies result in a leading introduction to database systems. Intended for computer science majors, Fundamentals of Database Systems, 6/e emphasizes math models, design issues, relational algebra, and relational calculus.', 35, 4, 3, 'products/prod_1.png'),
+(4, 'Java In A Nutshell, 5th Edition', 1, 'With more than 700,000 copies sold to date, Java in a Nutshell from O\'Reilly is clearly the favorite resource amongst the legion of developers and programmers using Java technology. And now, with the release of the 5.0 version of Java, O\'Reilly has given the book that defined the \"in a Nutshell\" category another impressive tune-up. ', 30, 2, 1, 'products/prod_1.png'),
+(5, 'Essential C# 4.0', 2, 'Essential C# 4.0 is a well-organized,no-fluff guide to all versions of C# for programmers at all levels of C# experience. This fully updated edition shows how to make the most of C# 4.0’s new features and programming patterns to write code that is simple, yet powerful.', 40, 0, 1, 'products/prod_3.png'),
+(6, 'PHP and MySQL Web Development ', 2, 'The PHP server-side scripting language and the MySQL database management system (DBMS) make a potent pair. Both are open-source products--free of charge for most purposes--remarkably strong, and capable of handling all but the most enormous transaction loads. Both are supported by large, skilled, and enthusiastic communities of architects, programmers, and designers.', 35, 2, 1, 'products/prod_1.png'),
+(7, 'Unix in a Nutshell, Fourth Edition', 2, 'Unix in a Nutshell is the standard desktop reference, without question. (Manpages come in a close second.) With a clean layout and superior command tables available at a glance, O\'Reilly\'s third edition of Nutshell is an essential to own.', 25, 3, 2, 'products/prod_1.png'),
+(8, 'Windows 7: The Missing Manual', 2, 'In early reviews, geeks raved about Windows 7. But if you\'re an ordinary mortal, learning what this new system is all about will be challenging. Fear not: David Pogue\'s Windows 7: The Missing Manual comes to the rescue. Like its predecessors, this book illuminates its subject with reader-friendly insight, plenty of wit, and hardnosed objectivity for beginners as well as veteran PC users. ', 25, 1, 2, 'products/prod_3.png'),
+(9, 'Understanding the Linux Kernel, Third Edition', 2, 'In order to thoroughly understand what makes Linux tick and why it works so well on a wide variety of systems, you need to delve deep into the heart of the kernel. The kernel handles all interactions between the CPU and the external world, and determines which programs will share processor time, in what order. It manages limited memory so well that hundreds of processes can share the system efficiently, and expertly organizes data transfers so that the CPU isn\'t kept waiting any longer than nece', 30, 2, 2, 'products/prod_1.png'),
+(10, 'TCP/IP Illustrated, Vol. 1: The Protocols ', 1, 'TCP/IP Illustrated, Volume 1: The Protocols is an excellent text that provides encyclopedic coverage of the TCP/IP protocol suite. What sets this book apart from others on this subject is the fact that the author supplements all of the discussion with data collected via diagnostic programs; thus, it is possible to \"watch\" the protocols in action in a real situation. Also, the diagnostic tools involved are publicly available; the reader has the opportunity to play along at home. This offers the r', 50, 1, 4, 'products/prod_3.png'),
+(11, 'CCNA: Cisco Certified Network Associate Study Guide', 2, 'Cisco networking authority Todd Lammle has completely updated this new edition to cover all of the exam objectives for the latest version of the CCNA exam. Todd’s straightforward style provides lively examples, easy-to-understand analogies, and real-world scenarios that will not only help you prepare for the exam, but also give you a solid foundation as a Cisco networking professional.', 50, 4, 4, 'products/prod_3.png'),
+(12, 'Network Security Essentials: Applications and Standards (4th Edition)', 1, 'Wiliiam Stallings\' Network Security: Applications and Standards, 4/e is a practical survey of network security applications and standards, with unmatched support for instructors and students.', 60, 4, 4, 'products/prod_2.png'),
+(13, 'Learning Web Design: A Beginner\'s Guide to (X)HTML, StyleSheets, and Web Graphics', 2, 'Everything you need to know to create professional web sites is right here. Learning Web Design  starts from the beginning -- defining how the Web and web pages work -- and builds from there. By the end of the book, you\'ll have the skills to create multi-column CSS layouts with optimized graphic files, and you\'ll know how to get your pages up on the Web.\r\nEverything you need to know to create professional web sites is right here. Learning Web Design  starts from the beginning -- defining how the', 40, 4, 5, 'products/prod_2.png'),
+(14, 'Beginning Web Programming with HTML, XHTML, and CSS', 1, 'This beginning guide reviews HTML and also introduces you to using XHTML for the structure of a web page and cascading style sheets (CSS) for controlling how a document should appear on a web page. You?ll learn how to take advantage of the latest features of browsers while making sure that your pages still work in older, but popular, browsers. By incorporating usability and accessibility, you?ll be able to write professional-looking and well-coded web pages that use the latest technologies. ', 35, 3, 12, 'products/prod_4.png'),
+(15, 'Programming the World Wide Web', 1, 'Programming the World Wide Web 2010 provides a comprehensive introduction to the tools and skills required for both client- and server-side programming, teaching students how to develop platform-independent sites using the most current Web development technology', 50, 4, 5, 'products/prod_3.png'),
+(21, 'Windows 10: The Missing Manual', 2, 'In early reviews, geeks raved about Windows 10. But if you\'re an ordinary mortal, learning what this new system is all about will be challenging. Fear not: David Pogue\'s Windows 7: The Missing Manual comes to the rescue. Like its predecessors, this book illuminates its subject with reader-friendly insight, plenty of wit, and hardnosed objectivity for beginners as well as veteran PC users. ', 25, 0, 2, 'products/prod_1.png');
+
+-- --------------------------------------------------------
+
+--
+-- Στημένη δομή για προβολή `v_authors`
+-- (Δείτε παρακάτω για την πραγματική προβολή)
+--
+CREATE TABLE `v_authors` (
+`id` int(11)
+,`name` varchar(201)
+);
 
 -- --------------------------------------------------------
 
@@ -858,6 +879,25 @@ CREATE TABLE `v_best_sellers` (
 `id` int(11)
 ,`title` varchar(200)
 ,`img` text
+);
+
+-- --------------------------------------------------------
+
+--
+-- Στημένη δομή για προβολή `v_books`
+-- (Δείτε παρακάτω για την πραγματική προβολή)
+--
+CREATE TABLE `v_books` (
+`book_id` int(11)
+,`title` varchar(200)
+,`author_id` int(11)
+,`author` varchar(201)
+,`description` varchar(500)
+,`category_id` int(11)
+,`category` varchar(200)
+,`price` float
+,`stock` int(11) unsigned
+,`image` text
 );
 
 -- --------------------------------------------------------
@@ -875,11 +915,29 @@ CREATE TABLE `v_new_books` (
 -- --------------------------------------------------------
 
 --
+-- Δομή για προβολή `v_authors`
+--
+DROP TABLE IF EXISTS `v_authors`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_authors`  AS  select `author`.`ID` AS `id`,concat(`author`.`last_name`,' ',`author`.`first_name`) AS `name` from `author` order by 2 ;
+
+-- --------------------------------------------------------
+
+--
 -- Δομή για προβολή `v_best_sellers`
 --
 DROP TABLE IF EXISTS `v_best_sellers`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_best_sellers`  AS  select `d`.`Product` AS `id`,`p`.`Title` AS `title`,`p`.`image` AS `img` from (`orderdetails` `d` join `product` `p` on(`p`.`ID` = `d`.`Product`)) group by `d`.`Product` order by count(`d`.`ID`) * `d`.`Quantity` desc limit 5 ;
+
+-- --------------------------------------------------------
+
+--
+-- Δομή για προβολή `v_books`
+--
+DROP TABLE IF EXISTS `v_books`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_books`  AS  select `b`.`ID` AS `book_id`,`b`.`Title` AS `title`,`a`.`ID` AS `author_id`,concat(`a`.`last_name`,' ',`a`.`first_name`) AS `author`,`b`.`Description` AS `description`,`c`.`ID` AS `category_id`,`c`.`Name` AS `category`,`b`.`Price` AS `price`,`b`.`stock` AS `stock`,`b`.`image` AS `image` from ((`product` `b` join `category` `c` on(`c`.`ID` = `b`.`Category`)) join `author` `a` on(`a`.`ID` = `b`.`author`)) order by `b`.`Title` ;
 
 -- --------------------------------------------------------
 
@@ -929,7 +987,8 @@ ALTER TABLE `orders`
 --
 ALTER TABLE `product`
   ADD PRIMARY KEY (`ID`),
-  ADD KEY `Category` (`Category`);
+  ADD KEY `Category` (`Category`),
+  ADD KEY `fk_product_authorid` (`author`);
 
 --
 -- AUTO_INCREMENT για άχρηστους πίνακες
@@ -939,7 +998,7 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT για πίνακα `author`
 --
 ALTER TABLE `author`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT για πίνακα `category`
@@ -969,7 +1028,18 @@ ALTER TABLE `orders`
 -- AUTO_INCREMENT για πίνακα `product`
 --
 ALTER TABLE `product`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- Περιορισμοί για άχρηστους πίνακες
+--
+
+--
+-- Περιορισμοί για πίνακα `product`
+--
+ALTER TABLE `product`
+  ADD CONSTRAINT `fk_product_authorid` FOREIGN KEY (`author`) REFERENCES `author` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_product_categoryid` FOREIGN KEY (`Category`) REFERENCES `category` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

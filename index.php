@@ -32,7 +32,7 @@ if( ! isset($_SESSION['is_admin'])) {
   </head>
 <body>
     <header>
-      <nav class="navbar navbar-expand-<?php if($_SESSION['username']!='?') echo "lg"; else echo "md";?> navbar-dark fixed-top bg-info">
+      <nav id="topNavbar" class="navbar navbar-expand-<?php if($_SESSION['username']!='?') echo "lg"; else echo "md";?> navbar-dark bg-info">
         <a class="navbar-brand" href="#">Bookstore</a>
         <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -95,9 +95,9 @@ if( ! isset($_SESSION['is_admin'])) {
         </div>
       </nav>
     </header>
-<div class="container-fluid">
-      <div class="row">
-<main id='maincontent' role="main" class="w-100 pb-5 pt-3 px-2">
+<div class="container-fluid py-1 px-0" style="overflow: auto">
+      <div class="row m-0">
+<main id='maincontent' role="main" class="w-100 px-0">
 <?php
 if( ! isset($_REQUEST['p'])) {
 	$_REQUEST['p']='start';
@@ -123,7 +123,7 @@ if(! $ok) {
     </div>
 
     <!-- Footer -->
-    <div class="text-white bg-dark fixed-bottom">
+    <div id="bottomFooter" class="text-white bg-dark">
       <div class="row align-items-center mx-0">
         <div class="nav-link">
           &copy;Bookstore 2019-2020

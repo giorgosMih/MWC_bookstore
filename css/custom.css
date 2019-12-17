@@ -1,3 +1,10 @@
+html, body{
+	height: 100%;
+	overflow: hidden;
+	margin: 0;
+	padding: 0;
+}
+
 .carousel {
 	height:360px;
 	background-color: #23b6ce50;
@@ -42,6 +49,6 @@
 	content: url('../img/controls/delete.png');
 }
 
-.book-description-truncate{
+#bookList tr, .book-description-truncate{
 	cursor: pointer;
 }

@@ -19,6 +19,94 @@ toastr.options = {
 }
 //globals - end
 
+$(document).ready(function(){
+	calcMainContentHeight()
+	$('#navbarsExampleDefault').on('shown.bs.collapse', function(){
+		calcMainContentHeight();
+	});
+	$('#navbarsExampleDefault').on('hidden.bs.collapse', function(){
+		calcMainContentHeight();
+	});
+});
+$(window).resize(function(){
+	calcMainContentHeight()
+});
+
+
+var bookList = $('#bookList').DataTable({
+		"paging": true,
+		"lengthChange": true,
+		"pageLength": 5,
+		"lengthMenu": [
+			[5, 10, 20, 50, -1],
+			[5, 10, 20, 50, "All"]
+		],
+		"autoWidth": true,
+		"processing": true,
+		"serverSide": true,
+		stateSave: true,
+		"ajax": {
+			"url": "internal/products.php?loadBooks",
+			"method": "POST",
+			"data": function(d) {
+				var category = $('#filterCategory').val();
+				var author = $('#filterAuthor').val();
+				var priceFrom = $('#filterPriceFrom').val();
+				var priceTo = $('#filterPriceTo').val();
+
+				d.search = {
+					"category": category,
+					"author": author,
+					"priceFrom": priceFrom,
+					"priceTo": priceTo
+				};
+				return d;
+			}
+		},
+		"columns": [{
+			"targets": 0,
+			"data": "row",
+			"render": function(data, type, row, meta){
+				var d = JSON.parse(data);
+				return `
+					<img class='float-left mr-2' src='img/`+d.image+`' width='128'>
+			 		<div class='row m-0'>
+			 			<div class='h5'>`+d.title+`</div>
+			 		</div>
+			 		<div class='row m-0'>
+						<div>author: `+d.author+`</div>
+					</div>
+					<div class='row m-0'>
+						<div>category: `+d.category+`</div>
+					</div>
+			 		<div class='row m-0'>
+						<div>stock: `+d.stock+`, price: `+d.price+`</div>
+					</div>
+				`;
+			}
+		}],
+		"pagingType": "full_numbers",
+		"columnDefs": [{
+			"orderable": false,
+			"searchable": false,
+			"targets": [0]
+		}],
+		"order": [],
+		dom: '<"row mx-1" <".mr-auto" l>i<"ml-auto" p>>rt'
+	});
+
+$(document).on('click','#bookList tr', function(e){
+	var id = $(this).attr('id');
+	window.location.href = 'index.php?p=productinfo&pid='+id;
+});
+
+$(document).on('change','#filterCategory, #filterAuthor',function(e){
+	bookList.ajax.reload();
+});
+$(document).on('keyup','#filterPriceFrom, #filterPriceTo',function(e){
+	bookList.ajax.reload();
+});
+
 // book management - start
 var booksTable = $('#booksTable');
 if(booksTable.length){
@@ -102,7 +190,7 @@ if(booksTable.length){
 	//book add form submit
 	$(document).on('submit', '#addBookForm', function(e){
 		e.preventDefault();//stop original event
-		
+
 		var formData = new FormData(e.target);
 		formData.append('addBookSubmit',null);
 		$('#addBookForm input,select,textarea,button').prop('disabled', true);//disabled form fields for preventing editing
@@ -227,3 +315,20 @@ if(booksTable.length){
 	//delete book - end
 }
 // book management - end
+ 
+
+
+// functions
+function vh(v){
+	var h =  Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+	return (v*h)/100;
+}
+
+function vw(v){
+	var w =  Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+	return (v*w)/100;
+}
+
+function calcMainContentHeight(){
+	$('#maincontent').parents('div.container-fluid').height(vh(100) - $('#topNavbar').height() - $('#bottomFooter').height() - 24);
+}
