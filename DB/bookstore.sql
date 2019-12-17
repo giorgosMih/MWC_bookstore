@@ -833,7 +833,7 @@ CREATE TABLE `product` (
   `Price` float DEFAULT NULL,
   `stock` int(11) UNSIGNED NOT NULL DEFAULT 0,
   `Category` int(11) DEFAULT NULL,
-  `image` text NOT NULL DEFAULT 'products/empty.png'
+  `image` varchar(500) NOT NULL DEFAULT 'products/empty.png'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -928,7 +928,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `v_best_sellers`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_best_sellers`  AS  select `d`.`Product` AS `id`,`p`.`Title` AS `title`,`p`.`image` AS `img` from (`orderdetails` `d` join `product` `p` on(`p`.`ID` = `d`.`Product`)) group by `d`.`Product` order by count(`d`.`ID`) * `d`.`Quantity` desc limit 5 ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_best_sellers` AS select `d`.`Product` AS `id`,`p`.`Title` AS `title`,`p`.`image` AS `img` from (`orderdetails` `d` join `product` `p` on((`p`.`ID` = `d`.`Product`))) group by `d`.`Product` order by count((`d`.`ID` * `d`.`Quantity`)) desc limit 5
 
 -- --------------------------------------------------------
 

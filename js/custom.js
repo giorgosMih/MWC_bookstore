@@ -92,7 +92,7 @@ var bookList = $('#bookList').DataTable({
 			"targets": [0]
 		}],
 		"order": [],
-		dom: '<"row mx-1" <".mr-auto" l>i<"ml-auto" p>>rt'
+		dom: '<"row mx-1" <".mr-auto" l>i<"ml-auto" p>>rt<"row mx-1" <".mr-auto" l>i<"ml-auto" p>>'
 	});
 
 $(document).on('click','#bookList tr', function(e){

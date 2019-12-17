@@ -129,12 +129,12 @@ if( $stmt = $mysqli->prepare($sql) ) {
 			<div class="form-row">
 				<div class="form-group col">
 					<label for="filterPriceFrom">Price From</label>
-					<input id="filterPriceFrom" type="number" min="0" step="0.01" class="form-control">
+					<input id="filterPriceFrom" type="number" min="0" step="0.01" class="form-control" value="<?php if(isset($_SESSION['bookSearch'])) echo $_SESSION['bookSearch']['priceFrom'];?>">
 				</div>
 
 				<div class="form-group col">
 					<label for="filterPriceTo">Price To</label>
-					<input id="filterPriceTo" type="number" min="0" step="0.01" class="form-control">
+					<input id="filterPriceTo" type="number" min="0" step="0.01" class="form-control" value="<?php if(isset($_SESSION['bookSearch'])) echo $_SESSION['bookSearch']['priceTo'];?>">
 				</div>
 			</div>
 
@@ -144,6 +144,8 @@ if( $stmt = $mysqli->prepare($sql) ) {
       				<label class="form-check-label" for="filterInStock">In Stock</label>
 				</div>
 			</div>
+			
+			<hr class="d-md-none">
 
 		</form>
 
