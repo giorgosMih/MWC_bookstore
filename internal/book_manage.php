@@ -143,6 +143,7 @@ if ( $res = $mysqli->query($sql) ) {
 }
 ?>
 
+<div id="pageBookManageContainer" class="px-2">
 <table id="booksTable" class="table table-bordered table-striped w-100">
 	<thead>
 		<tr>
@@ -351,3 +352,4 @@ if ( $res = $mysqli->query($sql) ) {
 <!-- /delete book modal -->
 
 <!-- /modals -->
+</div>

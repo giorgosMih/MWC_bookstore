@@ -10,6 +10,10 @@ if( ! isset($_SESSION['username'])) {
 if( ! isset($_SESSION['is_admin'])) {
 	$_SESSION['is_admin']=0;
 }
+
+if(isset($_REQUEST['p']) && $_REQUEST['p'] != 'products' && $_REQUEST['p'] != 'productinfo'){
+  unset($_SESSION['bookSearch']);
+}
 ?>
 <head>
     <meta charset="utf-8">
@@ -87,8 +91,8 @@ if( ! isset($_SESSION['is_admin'])) {
           <?php endif;?>
 			</ul>
     <?php if(!$_SESSION['is_admin']): ?>
-      <form class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <form id="searchBoxForm" method="GET" class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" name="search" type="search" placeholder="Book Search" aria-label="Search" value="<?php if( isset($_SESSION['bookSearch']['searchbox'])) echo $_SESSION['bookSearch']['searchbox'];?>">
         <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
       </form>
     <?php endif; ?>
@@ -104,7 +108,7 @@ if( ! isset($_REQUEST['p'])) {
 }
 $p = $_REQUEST['p'];
 
-$pages = array('start','shopinfo','login','do_login','after_login','logout','myinfo','contact','products','cart','catinfo','productinfo','add_cart','empty_cart','buy_cart', 'orders_manage', 'book_manage');
+$pages = array('start','shopinfo','login','do_login','after_login','logout','myinfo','contact','products','cart','catinfo','productinfo','add_cart','empty_cart','buy_cart', 'orders_manage', 'book_manage', 'search_box');
 
 $ok=false;
 foreach($pages as $pp) {

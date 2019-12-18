@@ -1,4 +1,19 @@
-//globals - start
+/**
+ * Main js file Contents
+ * ---------------------
+ * 1 - Global variables, settings
+ * 2 - Products Page
+ * 3 - Book Management Page
+ * 4 - Global functions
+ */
+
+
+
+/**
+ * ================================
+ * 1 - Global variables, settings
+ * ================================
+ */
 //initialize toastr
 toastr.options = {
 	"closeButton": true,
@@ -6,7 +21,8 @@ toastr.options = {
 	"newestOnTop": false,
 	"progressBar": false,
 	"positionClass": "toast-top-right",
-	"preventDuplicates": true,
+	"preventDuplicates": false,
+	"newestOnTop": true,
 	"onclick": null,
 	"showDuration": "300",
 	"hideDuration": "1000",
@@ -17,8 +33,8 @@ toastr.options = {
 	"showMethod": "fadeIn",
 	"hideMethod": "fadeOut"
 }
-//globals - end
 
+//on navbar collapse toggle, resize the main container
 $(document).ready(function(){
 	calcMainContentHeight()
 	$('#navbarsExampleDefault').on('shown.bs.collapse', function(){
@@ -27,13 +43,37 @@ $(document).ready(function(){
 	$('#navbarsExampleDefault').on('hidden.bs.collapse', function(){
 		calcMainContentHeight();
 	});
+
+	$(document).on('click', '.bookListCart', function(e){
+		e.stopPropagation();
+	});
+
+	$('#searchBoxForm').submit(function(e){
+		e.preventDefault();
+		var val = $(this).find('input[type=search]').val();
+		window.location.href = 'index.php?p=search_box&search='+val;
+	});
 });
+//on window resize, resize the main container
 $(window).resize(function(){
 	calcMainContentHeight()
 });
+/**
+ * ================================
+ * end - Global variables, settings
+ * ================================
+ */
 
 
-var bookList = $('#bookList').DataTable({
+
+/**
+ * ===================
+ * 2 - Products Page
+ * ===================
+ */
+if( $('#pageProductsContainer').length ){
+	//initialize book datatable
+	var bookList = $('#bookList').DataTable({
 		"paging": true,
 		"lengthChange": true,
 		"pageLength": 5,
@@ -44,7 +84,7 @@ var bookList = $('#bookList').DataTable({
 		"autoWidth": true,
 		"processing": true,
 		"serverSide": true,
-		stateSave: true,
+		"stateSave": true,
 		"ajax": {
 			"url": "internal/products.php?loadBooks",
 			"method": "POST",
@@ -82,7 +122,14 @@ var bookList = $('#bookList').DataTable({
 			 		<div class='row m-0'>
 						<div>stock: `+d.stock+`, price: `+d.price+`</div>
 					</div>
-				`;
+					`+((d.stock > 0)?`
+					<form class="bookListCart" onsubmit="add_cart(event, `+d.book_id+`)">
+						<input class="form-control" title="Quantity" type="number" min="1" step="1" value="1">
+						<button type="submit" class="form-control btn-outline-success" title="Add To Cart">
+							<img src="img/controls/cart.png" height="22" alt="" />
+						</button>
+					</form>
+				`:'<div class="bookListCart text-danger h6">Out of stock</div>');
 			}
 		}],
 		"pagingType": "full_numbers",
@@ -92,24 +139,68 @@ var bookList = $('#bookList').DataTable({
 			"targets": [0]
 		}],
 		"order": [],
-		dom: '<"row mx-1" <".mr-auto" l>i<"ml-auto" p>>rt<"row mx-1" <".mr-auto" l>i<"ml-auto" p>>'
+		"dom": '<"row mx-1" <".mr-auto" l>i<"ml-auto" p>>rt<"row mx-1" <".mr-auto" l>i<"ml-auto" p>>',
+		"language":{
+    		"emptyTable":     "No books available in our store yet.",
+    		"info":           "Showing _START_ to _END_ of _TOTAL_ books",
+    		"infoEmpty":      "Showing 0 to 0 of 0 books",
+    		"infoFiltered":   "(filtered from _MAX_ total books)",
+    		"infoPostFix":    "",
+    		"thousands":      ",",
+    		"lengthMenu":     "_MENU_ books per page",
+    		"loadingRecords": "Loading...",
+    		"processing":     "Loading...",
+    		"zeroRecords":    "No books found with these filters.",
+    		"paginate": {
+        		"first":      "<<",
+        		"last":       ">>",
+        		"next":       ">",
+        		"previous":   "<"
+    		}
+		}
 	});
 
-$(document).on('click','#bookList tr', function(e){
-	var id = $(this).attr('id');
-	window.location.href = 'index.php?p=productinfo&pid='+id;
-});
+	//on product click, redirect to product details page
+	$(document).on('click','#bookList tr', function(e){
+		var id = $(this).attr('id');
+		window.location.href = 'index.php?p=productinfo&pid='+id;
+	});
 
-$(document).on('change','#filterCategory, #filterAuthor',function(e){
-	bookList.ajax.reload();
-});
-$(document).on('keyup','#filterPriceFrom, #filterPriceTo',function(e){
-	bookList.ajax.reload();
-});
+	//on select element filters changed, reload table to apply the filters
+	$(document).on('change','#filterCategory, #filterAuthor',function(e){
+		bookList.ajax.reload();
+	});
+	//on input element filters changed, reload table to apply the filters
+	$(document).on('keyup','#filterPriceFrom, #filterPriceTo',function(e){
+		bookList.ajax.reload();
+	});
 
-// book management - start
-var booksTable = $('#booksTable');
-if(booksTable.length){
+	$(document).on('click','#filterClearBtn',function(e){
+		$('#filterCategory, #filterAuthor').val("");
+		$('#filterPriceFrom, #filterPriceTo').val("");
+		bookList.ajax.reload();
+	});
+
+	$(document).on('click','#filterClearSearchBtn',function(e){
+		$('#searchBoxForm input').val("");
+		$('#searchBoxForm').submit();
+	});
+}
+/**
+ * ===================
+ * end - Products Page
+ * ===================
+ */
+
+
+
+/**
+ * ==========================
+ * 3 - Book Management Page
+ * ==========================
+ */
+if( $('#pageBookManageContainer').length ){
+	//initialize book datatable
 	var table = $('#booksTable').DataTable({
 		"paging": true,
 		"lengthChange": true,
@@ -168,6 +259,7 @@ if(booksTable.length){
 
 	var currentBookDescription;
 	var expanded = false;
+	//on click book description cell, expand and show all of it
 	$(document).on('click', '.book-description-truncate', function(e){
 		var descr = $(e.target).data('description');
 		if(descr.length <= 30 || expanded) return;
@@ -175,6 +267,7 @@ if(booksTable.length){
 		$(e.target).html(descr);
 		expanded = true;
 	});
+	//on mouse out of book description cell, collapse and show only 30 chars of the description
 	$(document).on('mouseout', '.book-description-truncate', function(e){
 		var descr = $(e.target).data('description');
 		if(descr.length <= 30 || !expanded) return;
@@ -302,33 +395,88 @@ if(booksTable.length){
 		.done(function(res) {
 			console.log('Affected Rows: ' + res);
 			table.ajax.reload();//on success, refresh book list to get updated data
-			$('#deleteBookModal').modal('hide');//hide the edit book modal
 			$('#deleteBookForm')[0].reset();
 			toastr["success"]("","The book has been deleted successfully!");//show message to user
 		})
 		.fail(function(err) {
 			console.log(err);//on error, log the error
 			toastr["error"]("The book's deletion failed.", "Delete Error");//show message to user
+		})
+		.always(function(){
+			$('#deleteBookModal').modal('hide');//hide the delete book modal
 		});
 		
 	});
 	//delete book - end
 }
-// book management - end
+/**
+ * ==========================
+ * end - Book Management Page
+ * ==========================
+ */
  
 
 
-// functions
+/**
+ * ======================
+ * 4 - Global functions
+ * ======================
+ */
+
+/**
+ * Returns the current viewport height (in pixels) based on a given percentage.
+ * @param  {float} v viewport percentage.
+ * @return {int}   viewport height in pixels.
+ */
 function vh(v){
 	var h =  Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 	return (v*h)/100;
 }
 
+/**
+ * Returns the current viewport width (in pixels) based on a given percentage.
+ * @param  {float} v viewport percentage.
+ * @return {int}   viewport width in pixels.
+ */
 function vw(v){
 	var w =  Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 	return (v*w)/100;
 }
 
+/**
+ * Resizes the main container's height, so that the navbar, the footer and the main container
+ * have a total of 100% of the window's current height.
+ */
 function calcMainContentHeight(){
 	$('#maincontent').parents('div.container-fluid').height(vh(100) - $('#topNavbar').height() - $('#bottomFooter').height() - 24);
 }
+
+function add_cart(e, pid) {
+	e.preventDefault()
+	var a = $(e.target).find('input[type=number]').val();
+	
+	$.ajax({
+		url: 'ajax/add_cart.php',
+		type: 'GET',
+		data: {
+			"pid": pid,
+			"qty": a,
+		}
+	})
+	.done(function(res) {
+		toastr["success"]("The book has been added to your cart!", "Success");//show message to user
+	})
+	.fail(function(err) {
+		console.log("Add to cart error.");
+		console.log(err);
+		toastr["error"]("The book failed to be added to your cart.", "An Error Occurred");//show message to user
+	})
+	.always(function() {
+		e.target.reset();
+	});
+}
+/**
+ * ======================
+ * end - Global functions
+ * ======================
+ */

@@ -7,7 +7,10 @@ if($_SERVER['REQUEST_METHOD'] == "POST" && isset($_SERVER['HTTP_X_REQUESTED_WITH
 		$start = $_POST['start'];
 		$length = $_POST['length'];
 		$search = $_POST['search'];
-		$_SESSION['bookSearch'] = $search;
+		$_SESSION['bookSearch']['category'] = $search['category'];
+		$_SESSION['bookSearch']['author'] = $search['author'];
+		$_SESSION['bookSearch']['priceFrom'] = $search['priceFrom'];
+		$_SESSION['bookSearch']['priceTo'] = $search['priceTo'];
 
 		//build filters
 		$filters = array();
@@ -24,6 +27,17 @@ if($_SERVER['REQUEST_METHOD'] == "POST" && isset($_SERVER['HTTP_X_REQUESTED_WITH
 			$filters[] = "price <= '$search[priceTo]'";
 		}
 		$filters = implode(' AND ', $filters);
+
+		//check search box filter
+		if( isset($_SESSION['bookSearch']['searchbox']) ){
+			$searchbox = $_SESSION['bookSearch']['searchbox'];
+			if( !empty($filters) ){
+				$filters .= " AND CONCAT(category,author,description,title) LIKE '%$searchbox%'";
+			}
+			else{
+				$filters .= "CONCAT(category,author,description,title) LIKE '%$searchbox%'";
+			}
+		}
 
 		//get total count of all records
 		$sql = 'select count(*) as "total" from v_books';
@@ -94,7 +108,7 @@ if( $stmt = $mysqli->prepare($sql) ) {
 }
 ?>
 
-<div class="row m-0">
+<div id="pageProductsContainer" class="row m-0">
 	<div class="col-md-4 col-lg-3 col-xl-2">
 		<div class="h4">
 			<div class="d-md-block d-none">Filters</div>
@@ -139,9 +153,12 @@ if( $stmt = $mysqli->prepare($sql) ) {
 			</div>
 
 			<div class="form-row">
-				<div class="ml-4 form-group col">
-					<input class="form-check-input" type="checkbox" id="filterInStock">
-      				<label class="form-check-label" for="filterInStock">In Stock</label>
+				<div class="form-group col">
+					<input id="filterClearBtn" class="form-control btn-danger" type="button" value="Clear Filters">
+				</div>
+
+				<div class="form-group col">
+					<input id="filterClearSearchBtn" class="form-control btn-danger" type="button" value="Clear Search">
 				</div>
 			</div>
 			
@@ -153,30 +170,6 @@ if( $stmt = $mysqli->prepare($sql) ) {
 	<div class="col">
 		<table id="bookList" class="table table-bordered w-100">
 			<thead class="d-none"></thead>
-			<tbody>
-				<?php
-				// foreach ($books as $index => $row) {
-				// 	echo "
-				// 	<tr id='$row[book_id]'>
-				// 		<td>
-				// 			<img class='float-left mr-2' src='img/$row[image]' width='128'>
-				// 			<div class='row m-0'>
-				// 				<div class='h5'>$row[title]</div>
-				// 			</div>
-				// 			<div class='row m-0'>
-				// 				<div>author: $row[author]</div>
-				// 			</div>
-				// 			<div class='row m-0'>
-				// 				<div>category: $row[category]</div>
-				// 			</div>
-				// 			<div class='row m-0'>
-				// 				<div>stock: $row[stock], price: $row[price]</div>
-				// 			</div>
-				// 		</td>
-				// 	</tr>";
-				// }
-				?>
-			</tbody>
 		</table>
 	</div>
 </div>

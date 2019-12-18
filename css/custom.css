@@ -52,3 +52,13 @@ html, body{
 #bookList tr, .book-description-truncate{
 	cursor: pointer;
 }
+
+.bookListCart{
+	clear: left;
+	margin-top: 1em;
+	cursor: default;
+}
+.bookListCart .form-control{
+	width: 60px;
+	display: inline;
+}

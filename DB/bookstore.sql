@@ -861,63 +861,9 @@ INSERT INTO `product` (`ID`, `Title`, `author`, `Description`, `Price`, `stock`,
 -- --------------------------------------------------------
 
 --
--- Στημένη δομή για προβολή `v_authors`
--- (Δείτε παρακάτω για την πραγματική προβολή)
---
-CREATE TABLE `v_authors` (
-`id` int(11)
-,`name` varchar(201)
-);
-
--- --------------------------------------------------------
-
---
--- Στημένη δομή για προβολή `v_best_sellers`
--- (Δείτε παρακάτω για την πραγματική προβολή)
---
-CREATE TABLE `v_best_sellers` (
-`id` int(11)
-,`title` varchar(200)
-,`img` text
-);
-
--- --------------------------------------------------------
-
---
--- Στημένη δομή για προβολή `v_books`
--- (Δείτε παρακάτω για την πραγματική προβολή)
---
-CREATE TABLE `v_books` (
-`book_id` int(11)
-,`title` varchar(200)
-,`author_id` int(11)
-,`author` varchar(201)
-,`description` varchar(500)
-,`category_id` int(11)
-,`category` varchar(200)
-,`price` float
-,`stock` int(11) unsigned
-,`image` text
-);
-
--- --------------------------------------------------------
-
---
--- Στημένη δομή για προβολή `v_new_books`
--- (Δείτε παρακάτω για την πραγματική προβολή)
---
-CREATE TABLE `v_new_books` (
-`id` int(11)
-,`title` varchar(200)
-,`img` text
-);
-
--- --------------------------------------------------------
-
---
 -- Δομή για προβολή `v_authors`
 --
-DROP TABLE IF EXISTS `v_authors`;
+DROP VIEW IF EXISTS `v_authors`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_authors`  AS  select `author`.`ID` AS `id`,concat(`author`.`last_name`,' ',`author`.`first_name`) AS `name` from `author` order by 2 ;
 
@@ -926,7 +872,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 -- Δομή για προβολή `v_best_sellers`
 --
-DROP TABLE IF EXISTS `v_best_sellers`;
+DROP VIEW IF EXISTS `v_best_sellers`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_best_sellers` AS select `d`.`Product` AS `id`,`p`.`Title` AS `title`,`p`.`image` AS `img` from (`orderdetails` `d` join `product` `p` on((`p`.`ID` = `d`.`Product`))) group by `d`.`Product` order by count((`d`.`ID` * `d`.`Quantity`)) desc limit 5
 
@@ -935,7 +881,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 -- Δομή για προβολή `v_books`
 --
-DROP TABLE IF EXISTS `v_books`;
+DROP VIEW IF EXISTS `v_books`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_books`  AS  select `b`.`ID` AS `book_id`,`b`.`Title` AS `title`,`a`.`ID` AS `author_id`,concat(`a`.`last_name`,' ',`a`.`first_name`) AS `author`,`b`.`Description` AS `description`,`c`.`ID` AS `category_id`,`c`.`Name` AS `category`,`b`.`Price` AS `price`,`b`.`stock` AS `stock`,`b`.`image` AS `image` from ((`product` `b` join `category` `c` on(`c`.`ID` = `b`.`Category`)) join `author` `a` on(`a`.`ID` = `b`.`author`)) order by `b`.`Title` ;
 
@@ -944,7 +890,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 -- Δομή για προβολή `v_new_books`
 --
-DROP TABLE IF EXISTS `v_new_books`;
+DROP VIEW IF EXISTS `v_new_books`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_new_books`  AS  select `d`.`Product` AS `id`,`p`.`Title` AS `title`,`p`.`image` AS `img` from (`orderdetails` `d` join `product` `p` on(`p`.`ID` = `d`.`Product`)) group by `d`.`Product` order by `p`.`ID` desc limit 5 ;
 
