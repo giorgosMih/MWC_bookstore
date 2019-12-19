@@ -30,7 +30,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST" && isset($_SERVER['HTTP_X_REQUESTED_WITH
 
 		//check search box filter
 		if( isset($_SESSION['bookSearch']['searchbox']) ){
-			$searchbox = $_SESSION['bookSearch']['searchbox'];
+			$searchbox = htmlspecialchars($_SESSION['bookSearch']['searchbox']);
 			if( !empty($filters) ){
 				$filters .= " AND CONCAT(category,author,description,title) LIKE '%$searchbox%'";
 			}
@@ -95,7 +95,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST" && isset($_SERVER['HTTP_X_REQUESTED_WITH
 	}
 }
 
-$sql = "select * from v_authors";
+$sql = "select * from author";
 if( $stmt = $mysqli->prepare($sql) ) {
 	$stmt->execute();
 	$authors = $stmt->get_result();
@@ -134,7 +134,7 @@ if( $stmt = $mysqli->prepare($sql) ) {
 					<select id="filterAuthor" class="form-control">
 						<option value="">All authors</option>
 					<?php foreach ($authors as $a):?>
-						<option value="<?= $a['id']?>" <?php if(isset($_SESSION['bookSearch']) && $_SESSION['bookSearch']['author']==$a['id']) echo "selected";?>><?= $a['name']?></option>
+						<option value="<?= $a['ID']?>" <?php if(isset($_SESSION['bookSearch']) && $_SESSION['bookSearch']['author']==$a['ID']) echo "selected";?>><?= $a['name']?></option>
 					<?php endforeach;?>
 					</select>
 				</div>

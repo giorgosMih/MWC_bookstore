@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Φιλοξενητής: 127.0.0.1
--- Χρόνος δημιουργίας: 17 Δεκ 2019 στις 16:28:13
+-- Χρόνος δημιουργίας: 19 Δεκ 2019 στις 13:22:02
 -- Έκδοση διακομιστή: 10.4.10-MariaDB
 -- Έκδοση PHP: 7.3.12
 
@@ -12,62 +12,9 @@ SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
 --
 -- Βάση δεδομένων: `bookstore`
 --
-
-DELIMITER $$
---
--- Συναρτήσεις
---
-CREATE DEFINER=`root`@`localhost` FUNCTION `levenshtein` (`s1` VARCHAR(255), `s2` VARCHAR(255)) RETURNS INT(11) BEGIN
-        DECLARE s1_len, s2_len, i, j, c, c_temp, cost INT;
-        DECLARE s1_char CHAR;
-        -- max strlen=255
-        DECLARE cv0, cv1 VARBINARY(256);
-
-        SET s1_len = CHAR_LENGTH(s1), s2_len = CHAR_LENGTH(s2), cv1 = 0x00, j = 1, i = 1, c = 0;
-
-        IF s1 = s2 THEN
-            RETURN 0;
-        ELSEIF s1_len = 0 THEN
-            RETURN s2_len;
-        ELSEIF s2_len = 0 THEN
-            RETURN s1_len;
-        ELSE
-            WHILE j <= s2_len DO
-                SET cv1 = CONCAT(cv1, UNHEX(HEX(j))), j = j + 1;
-            END WHILE;
-            WHILE i <= s1_len DO
-                SET s1_char = SUBSTRING(s1, i, 1), c = i, cv0 = UNHEX(HEX(i)), j = 1;
-                WHILE j <= s2_len DO
-                    SET c = c + 1;
-                    IF s1_char = SUBSTRING(s2, j, 1) THEN
-                        SET cost = 0; ELSE SET cost = 1;
-                    END IF;
-                    SET c_temp = CONV(HEX(SUBSTRING(cv1, j, 1)), 16, 10) + cost;
-                    IF c > c_temp THEN SET c = c_temp; END IF;
-                    SET c_temp = CONV(HEX(SUBSTRING(cv1, j+1, 1)), 16, 10) + 1;
-                    IF c > c_temp THEN
-                        SET c = c_temp;
-                    END IF;
-                    SET cv0 = CONCAT(cv0, UNHEX(HEX(c))), j = j + 1;
-                END WHILE;
-                SET cv1 = cv0, i = i + 1;
-            END WHILE;
-        END IF;
-        RETURN c;
-    END$$
-
-DELIMITER ;
-
--- --------------------------------------------------------
 
 --
 -- Δομή πίνακα για τον πίνακα `author`
@@ -75,17 +22,16 @@ DELIMITER ;
 
 CREATE TABLE `author` (
   `ID` int(11) NOT NULL,
-  `last_name` varchar(100) NOT NULL,
-  `first_name` varchar(100) NOT NULL
+  `name` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Άδειασμα δεδομένων του πίνακα `author`
 --
 
-INSERT INTO `author` (`ID`, `last_name`, `first_name`) VALUES
-(1, 'Papadopoulos', 'Nikos'),
-(2, 'Georgiadis', 'George');
+INSERT INTO `author` (`ID`, `name`) VALUES
+(1, 'Papadopoulos Georgios'),
+(2, 'Georgiadis Nikolaos');
 
 -- --------------------------------------------------------
 
@@ -395,7 +341,6 @@ INSERT INTO `orderdetails` (`ID`, `Orders`, `Quantity`, `Product`) VALUES
 (308, 166, 1, 8),
 (309, 167, 1, 2),
 (310, 167, 1, 8),
-(311, 168, 0, 0),
 (312, 168, 1, 9),
 (313, 169, 1, 6),
 (314, 170, 1, 8),
@@ -856,41 +801,34 @@ INSERT INTO `product` (`ID`, `Title`, `author`, `Description`, `Price`, `stock`,
 (13, 'Learning Web Design: A Beginner\'s Guide to (X)HTML, StyleSheets, and Web Graphics', 2, 'Everything you need to know to create professional web sites is right here. Learning Web Design  starts from the beginning -- defining how the Web and web pages work -- and builds from there. By the end of the book, you\'ll have the skills to create multi-column CSS layouts with optimized graphic files, and you\'ll know how to get your pages up on the Web.\r\nEverything you need to know to create professional web sites is right here. Learning Web Design  starts from the beginning -- defining how the', 40, 4, 5, 'products/prod_2.png'),
 (14, 'Beginning Web Programming with HTML, XHTML, and CSS', 1, 'This beginning guide reviews HTML and also introduces you to using XHTML for the structure of a web page and cascading style sheets (CSS) for controlling how a document should appear on a web page. You?ll learn how to take advantage of the latest features of browsers while making sure that your pages still work in older, but popular, browsers. By incorporating usability and accessibility, you?ll be able to write professional-looking and well-coded web pages that use the latest technologies. ', 35, 3, 12, 'products/prod_4.png'),
 (15, 'Programming the World Wide Web', 1, 'Programming the World Wide Web 2010 provides a comprehensive introduction to the tools and skills required for both client- and server-side programming, teaching students how to develop platform-independent sites using the most current Web development technology', 50, 4, 5, 'products/prod_3.png'),
-(21, 'Windows 10: The Missing Manual', 2, 'In early reviews, geeks raved about Windows 10. But if you\'re an ordinary mortal, learning what this new system is all about will be challenging. Fear not: David Pogue\'s Windows 7: The Missing Manual comes to the rescue. Like its predecessors, this book illuminates its subject with reader-friendly insight, plenty of wit, and hardnosed objectivity for beginners as well as veteran PC users. ', 25, 0, 2, 'products/prod_1.png');
+(21, 'Windows 10: The Missing Manual', 2, 'In early reviews, geeks raved about Windows 10. But if you\'re an ordinary mortal, learning what this new system is all about will be challenging. Fear not: David Pogue\'s Windows 7: The Missing Manual comes to the rescue. Like its predecessors, this book illuminates its subject with reader-friendly insight, plenty of wit, and hardnosed objectivity for beginners as well as veteran PC users. ', 25, 0, 2, 'products/prod_1.png'),
+(25, 'dfhgdfg', 1, 'dfgdfg', 45, 45, 7, 'products/empty.png'),
+(26, 'asd', 2, 'sdf', 24, 234, 9, 'products/empty.png'),
+(28, 'fg', 1, '435dfgdfg dfg', 43, 34, 1, 'products/empty.png'),
+(29, 'http://localhost:8080/', 1, 'dg', 45, 45, 8, 'products/empty.png'),
+(33, 'dfg', 2, 'dfg', 45, 45, 1, 'products/empty.png');
 
 -- --------------------------------------------------------
 
---
--- Δομή για προβολή `v_authors`
---
-DROP VIEW IF EXISTS `v_authors`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_authors`  AS  select `author`.`ID` AS `id`,concat(`author`.`last_name`,' ',`author`.`first_name`) AS `name` from `author` order by 2 ;
-
--- --------------------------------------------------------
 
 --
 -- Δομή για προβολή `v_best_sellers`
---
-DROP VIEW IF EXISTS `v_best_sellers`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_best_sellers` AS select `d`.`Product` AS `id`,`p`.`Title` AS `title`,`p`.`image` AS `img` from (`orderdetails` `d` join `product` `p` on((`p`.`ID` = `d`.`Product`))) group by `d`.`Product` order by count((`d`.`ID` * `d`.`Quantity`)) desc limit 5
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_best_sellers`  AS  select `d`.`Product` AS `id`,`p`.`Title` AS `title`,`p`.`image` AS `img` from (`orderdetails` `d` join `product` `p` on(`p`.`ID` = `d`.`Product`)) group by `d`.`Product` order by count(`d`.`ID` * `d`.`Quantity`) desc limit 5 ;
 
 -- --------------------------------------------------------
 
 --
 -- Δομή για προβολή `v_books`
 --
-DROP VIEW IF EXISTS `v_books`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_books`  AS  select `b`.`ID` AS `book_id`,`b`.`Title` AS `title`,`a`.`ID` AS `author_id`,concat(`a`.`last_name`,' ',`a`.`first_name`) AS `author`,`b`.`Description` AS `description`,`c`.`ID` AS `category_id`,`c`.`Name` AS `category`,`b`.`Price` AS `price`,`b`.`stock` AS `stock`,`b`.`image` AS `image` from ((`product` `b` join `category` `c` on(`c`.`ID` = `b`.`Category`)) join `author` `a` on(`a`.`ID` = `b`.`author`)) order by `b`.`Title` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_books`  AS  select `b`.`ID` AS `book_id`,`b`.`Title` AS `title`,`a`.`ID` AS `author_id`,`a`.`name` AS `author`,`b`.`Description` AS `description`,`c`.`ID` AS `category_id`,`c`.`Name` AS `category`,`b`.`Price` AS `price`,`b`.`stock` AS `stock`,`b`.`image` AS `image` from ((`product` `b` join `category` `c` on(`c`.`ID` = `b`.`Category`)) join `author` `a` on(`a`.`ID` = `b`.`author`)) order by `b`.`Title` ;
 
 -- --------------------------------------------------------
 
 --
 -- Δομή για προβολή `v_new_books`
 --
-DROP VIEW IF EXISTS `v_new_books`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_new_books`  AS  select `d`.`Product` AS `id`,`p`.`Title` AS `title`,`p`.`image` AS `img` from (`orderdetails` `d` join `product` `p` on(`p`.`ID` = `d`.`Product`)) group by `d`.`Product` order by `p`.`ID` desc limit 5 ;
 
@@ -920,13 +858,16 @@ ALTER TABLE `customer`
 -- Ευρετήρια για πίνακα `orderdetails`
 --
 ALTER TABLE `orderdetails`
-  ADD PRIMARY KEY (`ID`);
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `fk_orderdetails_orderID` (`Orders`),
+  ADD KEY `fk_orderdetails_productID` (`Product`);
 
 --
 -- Ευρετήρια για πίνακα `orders`
 --
 ALTER TABLE `orders`
-  ADD PRIMARY KEY (`ID`);
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `fk_order_customerID` (`Customer`);
 
 --
 -- Ευρετήρια για πίνακα `product`
@@ -944,7 +885,7 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT για πίνακα `author`
 --
 ALTER TABLE `author`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT για πίνακα `category`
@@ -974,11 +915,24 @@ ALTER TABLE `orders`
 -- AUTO_INCREMENT για πίνακα `product`
 --
 ALTER TABLE `product`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- Περιορισμοί για άχρηστους πίνακες
 --
+
+--
+-- Περιορισμοί για πίνακα `orderdetails`
+--
+ALTER TABLE `orderdetails`
+  ADD CONSTRAINT `fk_orderdetails_orderID` FOREIGN KEY (`Orders`) REFERENCES `orders` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_orderdetails_productID` FOREIGN KEY (`Product`) REFERENCES `product` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Περιορισμοί για πίνακα `orders`
+--
+ALTER TABLE `orders`
+  ADD CONSTRAINT `fk_order_customerID` FOREIGN KEY (`Customer`) REFERENCES `customer` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Περιορισμοί για πίνακα `product`
@@ -987,7 +941,3 @@ ALTER TABLE `product`
   ADD CONSTRAINT `fk_product_authorid` FOREIGN KEY (`author`) REFERENCES `author` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_product_categoryid` FOREIGN KEY (`Category`) REFERENCES `category` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

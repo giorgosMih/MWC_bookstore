@@ -1,6 +1,8 @@
 <?php
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'){
 	if(isset($_POST['editBookSubmit'])){
+		$reloadPage = false;
+
 		require('dbconnect.php');
 		$newImage = $_FILES['image']['name'];
 
@@ -12,6 +14,18 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WITH
 			move_uploaded_file($_FILES['image']['tmp_name'], $imgPath.$newImage);
 		}
 
+		//check for new author
+		if(!is_numeric($_POST['author'])){
+			$sql = 'insert into author(name) values(?)';
+			$stmt = $mysqli->prepare($sql);
+			$stmt->bind_param('s', $_POST['author']);
+			$stmt->execute();
+			$_POST['author'] = $stmt->insert_id;
+			$stmt->close();
+
+			$reloadPage = true;
+		}
+
 		$sql = "
 		update product set Title=?,author=?,Description=?,Price=?,stock=?,Category=?".(($newImage)?", image='products/$newImage'":"")."
 		where ID=?
@@ -19,11 +33,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WITH
 		$stmt = $mysqli->prepare($sql);
 		$stmt->bind_param('sisdiii', $_POST['title'], $_POST['author'], $_POST['description'], $_POST['price'], $_POST['stock'], $_POST['category'], $_POST['id']);
 		$stmt->execute();
-		echo $stmt->affected_rows;
+		//echo $stmt->affected_rows;
 		$stmt->close();
+		echo $reloadPage;
 		exit();
 	}
 	else if(isset($_POST['addBookSubmit'])){
+		$reloadPage = false;
+
 		require('dbconnect.php');
 		$newImage = $_FILES['image']['name'];
 		if($newImage){
@@ -32,6 +49,18 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WITH
     			unlink($imgPath.$newImage); //remove the file
 			}
 			move_uploaded_file($_FILES['image']['tmp_name'], $imgPath.$newImage);
+		}
+
+		//check for new author
+		if(!is_numeric($_POST['author'])){
+			$sql = 'insert into author(name) values(?)';
+			$stmt = $mysqli->prepare($sql);
+			$stmt->bind_param('s', $_POST['author']);
+			$stmt->execute();
+			$_POST['author'] = $stmt->insert_id;
+			$stmt->close();
+
+			$reloadPage = true;
 		}
 
 		$sql = "
@@ -48,8 +77,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WITH
 		$stmt = $mysqli->prepare($sql);
 		$stmt->bind_param($binding, ...$data);
 		$stmt->execute();
-		echo $stmt->insert_id;
+		//echo $stmt->insert_id;
 		$stmt->close();
+		echo $reloadPage;
 		exit();
 	}
 	else if(isset($_POST['deleteBookSubmit'])){
@@ -125,7 +155,7 @@ if(!isset($_SESSION['is_admin']) || $_SESSION['is_admin']==0) {
 }
 
 //get authors for list
-$sql = 'select * from v_authors';
+$sql = 'select * from author ORDER BY name';
 $authors = array();
 if ( $res = $mysqli->query($sql) ) {
 	while($row = $res->fetch_assoc()){
@@ -161,7 +191,7 @@ if ( $res = $mysqli->query($sql) ) {
 
 <!-- modals -->
 <!-- add book modal -->
-<div class="modal fade" id="addBookModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="addBookModal" role="dialog" aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -183,10 +213,10 @@ if ( $res = $mysqli->query($sql) ) {
 					<div class="form-row">
 						<div class="form-group col">
 							<label for="addBookModal_author">Author (*)</label>
-							<select id="addBookModal_author" class="form-control" required name="author">
+							<select id="addBookModal_author" class="select2" required name="author">
 								<option value="">Choose...</option>
 							<?php foreach ($authors as $author):?>
-								<option value="<?= $author['id']?>"><?= $author['name']?></option>
+								<option value="<?= $author['ID']?>"><?= $author['name']?></option>
 							<?php endforeach; ?>
 							</select>
 						</div>
@@ -242,7 +272,7 @@ if ( $res = $mysqli->query($sql) ) {
 <!-- /add book modal -->
 
 <!-- edit book modal -->
-<div class="modal fade" id="editBookModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="editBookModal" role="dialog" aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -264,10 +294,10 @@ if ( $res = $mysqli->query($sql) ) {
 					<div class="form-row">
 						<div class="form-group col">
 							<label for="editBookModal_author">Author (*)</label>
-							<select id="editBookModal_author" class="form-control" required name="author">
+							<select id="editBookModal_author" class="select2" required name="author">
 								<option value="">Choose...</option>
 							<?php foreach ($authors as $author):?>
-								<option value="<?= $author['id']?>"><?= $author['name']?></option>
+								<option value="<?= $author['ID']?>"><?= $author['name']?></option>
 							<?php endforeach; ?>
 							</select>
 						</div>

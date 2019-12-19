@@ -53,6 +53,8 @@ $(document).ready(function(){
 		var val = $(this).find('input[type=search]').val();
 		window.location.href = 'index.php?p=search_box&search='+val;
 	});
+
+	$('.select2').select2();
 });
 //on window resize, resize the main container
 $(window).resize(function(){
@@ -72,6 +74,7 @@ $(window).resize(function(){
  * ===================
  */
 if( $('#pageProductsContainer').length ){
+$(document).ready(function(){
 	//initialize book datatable
 	var bookList = $('#bookList').DataTable({
 		"paging": true,
@@ -185,6 +188,8 @@ if( $('#pageProductsContainer').length ){
 		$('#searchBoxForm input').val("");
 		$('#searchBoxForm').submit();
 	});
+
+});
 }
 /**
  * ===================
@@ -200,6 +205,16 @@ if( $('#pageProductsContainer').length ){
  * ==========================
  */
 if( $('#pageBookManageContainer').length ){
+$(document).ready(function(){
+	var select2_opts = {
+		tags: true,
+		placeholder: 'Choose or add new...',
+		theme: 'bootstrap4'
+	};
+
+	$('#addBookModal_author').select2(select2_opts);
+	$('#editBookModal_author').select2(select2_opts);
+
 	//initialize book datatable
 	var table = $('#booksTable').DataTable({
 		"paging": true,
@@ -298,10 +313,15 @@ if( $('#pageBookManageContainer').length ){
 			data: formData
 		})
 		.done(function(res) {
-			console.log('New book ID: ' + res);
-			table.ajax.reload();//on success, refresh book list to get new data
-			$('#addBookModal').modal('hide');//hide the edit book modal
+			if(res){
+				window.location.reload();
+			}
+			else{
+				table.ajax.reload();//on success, refresh book list to get new data
+			}
 			$('#addBookForm')[0].reset();
+			$('#addBookModal_author').val(null).trigger('change');
+			$('#addBookModal').modal('hide');//hide the edit book modal
 			toastr["success"]("","The book has been inserted successfully!");//show message to user
 		})
 		.fail(function(err) {
@@ -327,7 +347,7 @@ if( $('#pageBookManageContainer').length ){
 		$('#editBookModal_price').val(row.price);
 		$('#editBookModal_description').val(row.description);
 		$('#editBookModal_stock').val(row.stock);
-		$('#editBookModal_author').val(row.author_id);
+		$('#editBookModal_author').val(row.author_id).trigger('change');
 		$('#editBookModal_category').val(row.category_id);
 		$('#editBookModal_image').attr("src", "./img/"+row.image);
 
@@ -354,10 +374,15 @@ if( $('#pageBookManageContainer').length ){
 			data: formData
 		})
 		.done(function(res) {
-			console.log('Affected Rows: ' + res);
-			table.ajax.reload();//on success, refresh book list to get updated data
-			$('#editBookModal').modal('hide');//hide the edit book modal
+			if(res){
+				window.location.reload();
+			}
+			else{
+				table.ajax.reload();//on success, refresh book list to get new data
+			}
 			$('#editBookForm')[0].reset();
+			$('#editBookModal_author').val(null).trigger('change');
+			$('#editBookModal').modal('hide');//hide the edit book modal
 			toastr["success"]("","The book has been updated successfully!");//show message to user
 		})
 		.fail(function(err) {
@@ -408,6 +433,8 @@ if( $('#pageBookManageContainer').length ){
 		
 	});
 	//delete book - end
+	
+});
 }
 /**
  * ==========================
