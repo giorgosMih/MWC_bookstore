@@ -428,8 +428,9 @@ if( $('#pageBookManageContainer').length ){
  * @param  {float} v viewport percentage.
  * @return {int}   viewport height in pixels.
  */
-function vh(v){
-	var h =  Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+function vh(v=100){
+	//var h =  Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+	var h =  window.visualViewport.height;
 	return (v*h)/100;
 }
 
@@ -438,8 +439,9 @@ function vh(v){
  * @param  {float} v viewport percentage.
  * @return {int}   viewport width in pixels.
  */
-function vw(v){
-	var w =  Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+function vw(v=100){
+	//var w =  Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+	var w =  window.visualViewport.width;
 	return (v*w)/100;
 }
 
@@ -448,7 +450,9 @@ function vw(v){
  * have a total of 100% of the window's current height.
  */
 function calcMainContentHeight(){
-	$('#maincontent').parents('div.container-fluid').height(vh(100) - $('#topNavbar').height() - $('#bottomFooter').height() - 24);
+	var navH = $('#topNavbar').parent().height();
+	var footH = $('#bottomFooter').height();
+	$('#maincontent').parents('div.container-fluid').outerHeight(vh() - navH - footH);
 }
 
 function add_cart(e, pid) {
