@@ -340,7 +340,7 @@ $(document).ready(function(){
 
 	//edit book - start
 	//button edit book was clicked from book list
-	$(document).on('click', 'button.btn-book-edit', function(e){
+	$(document).on('click', 'button.btn-edit', function(e){
 		var rowIdx = $($(e.target).parents('tr')[0]).index();// clicked row index
 		var row = table.rows(rowIdx).data()[0];// clicked row data
 		
@@ -401,7 +401,7 @@ $(document).ready(function(){
 
 	//delete book - start
 	//button delete book was clicked from book list
-	$(document).on('click', 'button.btn-book-delete', function(e){
+	$(document).on('click', 'button.btn-delete', function(e){
 		var id = $(e.target).data('id');//get book ID
 		$('#deleteBookModal_bookID').val(id);//add book ID to hidden field in delete form
 		$('#deleteBookModal').modal('show');//show modal with edit form
