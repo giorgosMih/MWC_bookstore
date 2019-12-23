@@ -350,7 +350,7 @@ $(document).ready(function(){
 		$('#editBookModal_description').val(row.description);
 		$('#editBookModal_stock').val(row.stock);
 		$('#editBookModal_author').val(row.author_id).trigger('change');
-		$('#editBookModalcategory').val(row.category_id);
+		$('#editBookModal_category').val(row.category_id);
 		$('#editBookModal_image').attr("src", "./img/"+row.image);
 
 		var id = $(e.target).data('id');//get book ID
