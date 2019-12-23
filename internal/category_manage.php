@@ -126,9 +126,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WITH
 			while ($row = $res->fetch_assoc()) {
 				$row['index'] = $start+$index++;
 				$row['actions'] = "
-				<button class='btn btn-outline-primary btn-sm btn-category-edit' title='Edit Category' data-id='$row[category_id]'>
+				<button class='btn btn-outline-primary btn-sm btn-edit' title='Edit Category' data-id='$row[ID]'>
 				</button>
-				<button class='btn btn-outline-danger btn-sm btn-category-delete' title='Delete Category' data-id='$row[category_id]'>
+				<button class='btn btn-outline-danger btn-sm btn-delete' title='Delete Category' data-id='$row[ID]'>
 				</button>
 				";
 				$data[] = $row;

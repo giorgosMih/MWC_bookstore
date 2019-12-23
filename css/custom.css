@@ -39,13 +39,13 @@ html, body{
 	background-color: #f0efed;
 }
 
-.btn-book-delete, .btn-book-edit{
+.btn-delete, .btn-edit{
 	padding: 0;
 }
-.btn-book-edit:after{
+.btn-edit:after{
 	content: url('../img/controls/edit.png');
 }
-.btn-book-delete:after{
+.btn-delete:after{
 	content: url('../img/controls/delete.png');
 }
 

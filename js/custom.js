@@ -561,7 +561,7 @@ $(document).ready(function(){
 		},
 		"columns": [
 		{"data": "index"},
-		{"data": "category name"},
+		{"data": "Name"},
 		{"data": "actions"}
 		],
 		dom: '<"row mx-1" <"#custom-btns.mr-auto"> <"ml-auto" f>><"clear">rtilp'
