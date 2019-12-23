@@ -5,6 +5,8 @@
  * 2 - Products Page
  * 3 - Book Management Page
  * 4 - Global functions
+ * 5 - Category Management Page
+ * 6 - Author Management Page
  */
 
 
@@ -348,7 +350,7 @@ $(document).ready(function(){
 		$('#editBookModal_description').val(row.description);
 		$('#editBookModal_stock').val(row.stock);
 		$('#editBookModal_author').val(row.author_id).trigger('change');
-		$('#editBookModal_category').val(row.category_id);
+		$('#editBookModalcategory').val(row.category_id);
 		$('#editBookModal_image').attr("src", "./img/"+row.image);
 
 		var id = $(e.target).data('id');//get book ID
@@ -510,4 +512,201 @@ function add_cart(e, pid) {
  * ======================
  * end - Global functions
  * ======================
+ */
+
+//==================================================================
+//==================================================================
+//==================================================================
+ /**
+ * ==========================
+ * 5 - Category Management Page
+ * ==========================
+ */
+if( $('#pageCategoryManageContainer').length ){
+$(document).ready(function(){
+	var select2_opts = {
+		tags: true,
+		placeholder: 'Choose or add new...',
+		theme: 'bootstrap4'
+	};
+
+	//$('#addCategoryModal_author').select2(select2_opts);
+	//$('#editCategoryModal_author').select2(select2_opts);
+
+	//initialize category datatable
+	var table = $('#categoriesTable').DataTable({
+		"paging": true,
+		"lengthChange": true,
+		"pageLength": 10,
+		"lengthMenu": [
+		[5, 10, 20, 50, -1],
+		[5, 10, 20, 50, "All"]
+		],
+		"autoWidth": true,
+		"processing": true,
+		"serverSide": true,
+		"pagingType": "full_numbers",
+		"columnDefs": [{
+			"orderable": false,
+			"searchable": false,
+			"targets": [0,2]
+		}],
+		"order": [],
+		"ajax": {
+			"url": "internal/category_manage.php?loadCategories",
+			"method": "POST",
+			"data": function(d) {
+				return d;
+			}
+		},
+		"columns": [
+		{"data": "index"},
+		{"data": "category name"},
+		{"data": "actions"}
+		],
+		dom: '<"row mx-1" <"#custom-btns.mr-auto"> <"ml-auto" f>><"clear">rtilp'
+	});
+
+	//add category - start
+	var createBtn = $('<button data-toggle="modal" data-target="#addCategoryModal" class="btn btn-outline-success btn-sm mb-1" title="Add Category"><img src="img/controls/create.png" alt="Add New">New Category</button>');
+	$('#custom-btns').append(createBtn);//add create category button to datatable DOM
+
+	//category add form submit
+	$(document).on('submit', '#addCategoryForm', function(e){
+		e.preventDefault();//stop original event
+
+		var formData = new FormData(e.target);
+		formData.append('addCategorySubmit',null);
+		$('#addCategoryForm input,select,textarea,button').prop('disabled', true);//disabled form fields for preventing editing
+
+		//send data with ajax
+		$.ajax({
+			url: 'internal/category_manage.php',
+			type: 'POST',
+			cache: false,
+			contentType: false,
+			processData: false,
+			data: formData
+		})
+		.done(function(res) {
+			if(res){
+				window.location.reload();
+			}
+			else{
+				table.ajax.reload();//on success, refresh category list to get new data
+			}
+			$('#addCategoryForm')[0].reset();
+			$('#addCategoryModal').modal('hide');//hide the edit category modal
+			toastr["success"]("","The category has been inserted successfully!");//show message to user
+		})
+		.fail(function(err) {
+			console.log(err);//on error, log the error
+			toastr["error"]("The category's insertion failed.", "Insert Error");//show message to user
+		})
+		.always(function() {
+			$('#addCategoryForm input,select,textarea,button').prop('disabled', false);//always re-enable the fields for next use
+		});
+		
+	});
+	//add category - end
+
+
+	//edit category - start
+	//button edit category was clicked from category list
+	$(document).on('click', 'button.btn-category-edit', function(e){
+		var rowIdx = $($(e.target).parents('tr')[0]).index();// clicked row index
+		var row = table.rows(rowIdx).data()[0];// clicked row data
+		
+		//fill in edit form fields with clicked row data
+		$('#editCategoryModal_category').val(row.category_id);
+
+		var id = $(e.target).data('id');//get category ID
+		$('#editCategoryModal_CategoryID').val(id);//add category ID to hidden field in edit form
+		$('#editCategoryModal').modal('show');//show modal with edit form
+	});
+
+	//category edit form submit
+	$(document).on('submit', '#editCategoryForm', function(e){
+		e.preventDefault();//stop original event
+
+		var formData = new FormData(e.target);
+		formData.append('editCategorySubmit',null);
+		$('#editCategoryForm input,select,textarea,button').prop('disabled', true);//disabled edit form fields for preventing editing
+		
+		//send updated data with ajax
+		$.ajax({
+			url: 'internal/category_manage.php',
+			type: 'POST',
+			cache: false,
+			contentType: false,
+			processData: false,
+			data: formData
+		})
+		.done(function(res) {
+			if(res){
+				window.location.reload();
+			}
+			else{
+				table.ajax.reload();//on success, refresh category list to get new data
+			}
+			$('#editCategoryForm')[0].reset();
+			//$('#editCategoryModal_author').val(null).trigger('change');
+			$('#editCategoryModal').modal('hide');//hide the edit category modal
+			toastr["success"]("","The category has been updated successfully!");//show message to user
+		})
+		.fail(function(err) {
+			console.log(err);//on error, log the error
+			toastr["error"]("The category's update failed.", "Update Error");//show message to user
+		})
+		.always(function() {
+			$('#editCategoryForm input,select,textarea,button').prop('disabled', false);//always re-enable the fields for next use
+		});
+		
+	});
+	//edit category - end
+	
+
+	//delete category - start
+	//button delete category was clicked from category list
+	$(document).on('click', 'button.btn-category-delete', function(e){
+		var id = $(e.target).data('id');//get category ID
+		$('#deleteCategoryModal_categoryID').val(id);//add category ID to hidden field in delete form
+		$('#deleteCategoryModal').modal('show');//show modal with edit form
+	});
+
+	//category delete form submit
+	$(document).on('submit', '#deleteCategoryForm', function(e){
+		e.preventDefault();//stop original event
+
+		var formData = $(e.target).serialize() + '&deleteCategorySubmit';//get form data and append identifier for serverside handling
+
+		//send updated data with ajax
+		$.ajax({
+			url: 'internal/category_manage.php',
+			type: 'POST',
+			data: formData
+		})
+		.done(function(res) {
+			console.log('Affected Rows: ' + res);
+			table.ajax.reload();//on success, refresh category list to get updated data
+			$('#deleteCategoryForm')[0].reset();
+			toastr["success"]("","The category has been deleted successfully!");//show message to user
+		})
+		.fail(function(err) {
+			console.log(err);//on error, log the error
+			toastr["error"]("The category's deletion failed.", "Delete Error");//show message to user
+		})
+		.always(function(){
+			$('#deleteCategoryModal').modal('hide');//hide the delete category modal
+		});
+		
+	});
+	//delete category - end
+	
+});
+}
+/**
+ * ==========================
+ * end - Category Management Page
+ * ==========================
  */

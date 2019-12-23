@@ -47,12 +47,19 @@ if(isset($_REQUEST['p']) && $_REQUEST['p'] != 'products' && $_REQUEST['p'] != 'p
         <div class="collapse navbar-collapse" id="navbarsExampleDefault">
           <ul class="navbar-nav mr-auto">
           <?php if($_SESSION['is_admin']):?>
+			<li class="nav-item<?php if($_SERVER['QUERY_STRING'] == 'p=author_manage') echo ' active';?>">
+              <a class="nav-link" href="?p=author_manage">Author Management</a>
+            </li>
             <li class="nav-item<?php if($_SERVER['QUERY_STRING'] == 'p=book_manage') echo ' active';?>">
               <a class="nav-link" href="?p=book_manage">Book Management</a>
+            </li>
+			<li class="nav-item<?php if($_SERVER['QUERY_STRING'] == 'p=category_manage') echo ' active';?>">
+              <a class="nav-link" href="?p=category_manage">Category Management</a>
             </li>
             <li class="nav-item<?php if($_SERVER['QUERY_STRING'] == 'p=orders_manage') echo ' active';?>">
               <a class="nav-link" href="?p=orders_manage">Order Management</a>
             </li>
+			
             <li class="nav-item">
               <a class="nav-link" href="?p=logout">Logout</a>
             </li>
@@ -110,7 +117,7 @@ if( ! isset($_REQUEST['p'])) {
 }
 $p = $_REQUEST['p'];
 
-$pages = array('start','shopinfo','login','do_login','after_login','logout','myinfo','contact','products','cart','catinfo','productinfo','add_cart','empty_cart','buy_cart', 'orders_manage', 'book_manage', 'search_box');
+$pages = array('start','shopinfo','login','do_login','after_login','logout','myinfo','contact','products','cart','catinfo','productinfo','add_cart','empty_cart','buy_cart', 'orders_manage', 'book_manage', 'search_box', 'category_manage', 'author_manage');
 
 $ok=false;
 foreach($pages as $pp) {
