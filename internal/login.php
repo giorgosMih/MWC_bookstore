@@ -32,7 +32,8 @@ Username: <input name="username"/>
 <br/>
 Password: <input name="pass" type="password"/>
 <br/>
-<input type="submit" value="LOGIN"/>
+<input name="LOGIN" type="submit" value="LOGIN"/>
+<input name="REGISTER" type="submit" value="REGISTER"/>
 <input name="p" value="do_login" type="hidden">
 </form>
 

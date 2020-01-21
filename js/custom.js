@@ -710,3 +710,146 @@ $(document).ready(function(){
  * end - Category Management Page
  * ==========================
  */
+
+
+ // Order Management 
+ if( $('#pageOrderManageContainer').length ){
+	$(document).ready(function(){
+		
+	
+		
+	
+		//initialize book datatable
+		var table = $('#OrdersTable').DataTable({
+			"paging": true,
+			"lengthChange": true,
+			"pageLength": 10,
+			"lengthMenu": [
+			[5, 10, 20, 50, -1],
+			[5, 10, 20, 50, "All"]
+			],
+			"autoWidth": true,
+			"processing": true,
+			"serverSide": true,
+			"pagingType": "full_numbers",
+			"columnDefs": [{
+				"orderable": false,
+				"searchable": false,
+				"targets": [4]
+			}],
+			"order": [],
+			"ajax": {
+				"url": "internal/orders_manage.php?loadBooks",
+				"method": "POST",
+				"data": function(d) {
+					return d;
+				}
+			},
+			"columns": [{
+				"data": "ID"
+			},
+			{
+				"data": "customer"
+			},
+			{
+				"data": "oDate"
+			},
+			
+			{
+				"data": "total price"
+			},
+			{
+				"data": "Status",
+				"render": function(data, type, row, meta) {
+					
+					if (data==0){
+						return '<span class="badge badge-pill badge-secondary">Processing</span>'
+
+					}
+					else if (data==-1){
+						return '<span class="badge badge-pill badge-danger">Declined</span>'
+					}
+					else 
+					    return '<span class="badge badge-pill badge-success">Accepted</span>'
+				}
+			},
+			
+			{
+				"data": "actions"
+			}
+
+			],
+			dom: '<"row mx-1" <"#custom-btns.mr-auto"> <"ml-auto" f>><"clear">rtilp'
+		});
+	
+		
+		
+		
+	
+		
+		
+		
+	
+	
+		//edit book - start
+		//button edit book was clicked from book list
+		$(document).on('click', 'button.btn-edit', function(e){
+			var id = $(e.target).data('id');//get book ID
+
+			
+			
+			$.ajax({
+				url: 'internal/orders_manage.php',
+				type: 'POST',
+				data: {
+					orderID:id,
+					accept:null
+				 }
+			})
+			.done(function(res) {
+				table.ajax.reload();//on success, refresh book list to get new data
+				toastr["success"]("","The Order has been Accepted successfully!");//show message to user
+				
+			})
+			.fail(function(err) {
+				console.log(err);//on error, log the error
+				toastr["error"]("The order failed to be accepted.", "Update Error");//show message to user
+			})
+			
+			
+			
+		});
+	
+		
+	
+		//delete book - start
+		//button delete book was clicked from book list
+		$(document).on('click', 'button.btn-delete', function(e){
+			var id = $(e.target).data('id');//get book ID
+
+			
+			
+			$.ajax({
+				url: 'internal/orders_manage.php',
+				type: 'POST',
+				data: {
+					orderID:id,
+					decline:null
+				 }
+			})
+			.done(function(res) {
+				table.ajax.reload();//on success, refresh book list to get new data
+				toastr["success"]("","The Order has been declined!");//show message to user
+				
+			})
+			.fail(function(err) {
+				console.log(err);//on error, log the error
+				toastr["error"]("The order failed to be declined.", "Update Error");//show message to user
+			})
+		});
+	
+		//book delete form submit
+		
+		
+	});
+	}
