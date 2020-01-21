@@ -530,8 +530,6 @@ $(document).ready(function(){
 		theme: 'bootstrap4'
 	};
 
-	//$('#addCategoryModal_author').select2(select2_opts);
-	//$('#editCategoryModal_author').select2(select2_opts);
 
 	//initialize category datatable
 	var table = $('#categoriesTable').DataTable({
@@ -549,7 +547,7 @@ $(document).ready(function(){
 		"columnDefs": [{
 			"orderable": false,
 			"searchable": false,
-			"targets": [0,2]
+			"targets": [0,2] //3 columns
 		}],
 		"order": [],
 		"ajax": {
@@ -575,26 +573,16 @@ $(document).ready(function(){
 	$(document).on('submit', '#addCategoryForm', function(e){
 		e.preventDefault();//stop original event
 
-		var formData = new FormData(e.target);
-		formData.append('addCategorySubmit',null);
+		var formData = $(e.target).serialize() + '&addCategorySubmit';
 		$('#addCategoryForm input,select,textarea,button').prop('disabled', true);//disabled form fields for preventing editing
-
 		//send data with ajax
 		$.ajax({
 			url: 'internal/category_manage.php',
 			type: 'POST',
-			cache: false,
-			contentType: false,
-			processData: false,
 			data: formData
 		})
 		.done(function(res) {
-			if(res){
-				window.location.reload();
-			}
-			else{
-				table.ajax.reload();//on success, refresh category list to get new data
-			}
+			table.ajax.reload();//on success, refresh category list to get new data
 			$('#addCategoryForm')[0].reset();
 			$('#addCategoryModal').modal('hide');//hide the edit category modal
 			toastr["success"]("","The category has been inserted successfully!");//show message to user
@@ -618,7 +606,7 @@ $(document).ready(function(){
 		var row = table.rows(rowIdx).data()[0];// clicked row data
 		
 		//fill in edit form fields with clicked row data
-		$('#editCategoryModal_category').val(row.category_id);
+		$('#editCategoryModal_category').val(row.id);
 
 		var id = $(e.target).data('id');//get category ID
 		$('#editCategoryModal_CategoryID').val(id);//add category ID to hidden field in edit form
@@ -650,7 +638,7 @@ $(document).ready(function(){
 				table.ajax.reload();//on success, refresh category list to get new data
 			}
 			$('#editCategoryForm')[0].reset();
-			//$('#editCategoryModal_author').val(null).trigger('change');
+			$('#editCategoryModal_author').val(null).trigger('change');
 			$('#editCategoryModal').modal('hide');//hide the edit category modal
 			toastr["success"]("","The category has been updated successfully!");//show message to user
 		})

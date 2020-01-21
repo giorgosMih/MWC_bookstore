@@ -1,97 +1,38 @@
 <?php
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'){
 	if(isset($_POST['editCategorySubmit'])){
-		$reloadPage = false;
-		
-/* 		require('dbconnect.php');
-		$newImage = $_FILES['image']['name'];
-
-		if($newImage){
-			$imgPath = dirname(dirname(__FILE__)).'/img/products/';
-			if(file_exists($imgPath.$newImage)) {
-    			unlink($imgPath.$newImage); //remove the file
-			}
-			move_uploaded_file($_FILES['image']['tmp_name'], $imgPath.$newImage);
-		} */
-		
-		/* //check for new author
-		if(!is_numeric($_POST['author'])){
-			$sql = 'insert into author(name) values(?)';
-			$stmt = $mysqli->prepare($sql);
-			$stmt->bind_param('s', $_POST['author']);
-			$stmt->execute();
-			$_POST['author'] = $stmt->insert_id;
-			$stmt->close();
-
-			$reloadPage = true;
-		} */
-		
-		$sql = "
-		update category set Name=?
-		where ID=?
-		";
+		require('dbconnect.php');
+		$reloadPage = false;	
+	
+		$sql = "update category set Name=? where ID=?";
 		$stmt = $mysqli->prepare($sql);
-		$stmt->bind_param('sisdiii', $_POST['Name'], $_POST['id']);
+		$stmt->bind_param('si', $_POST['Name'], $_POST['id']);
 		$stmt->execute();
-		//echo $stmt->affected_rows;
 		$stmt->close();
 		echo $reloadPage;
 		exit();
 	}
 	else if(isset($_POST['addCategorySubmit'])){
-		$reloadPage = false;
-
-/* 		require('dbconnect.php');
-		$newImage = $_FILES['image']['name'];
-		if($newImage){
-			$imgPath = dirname(dirname(__FILE__)).'/img/products/';
-			if(file_exists($imgPath.$newImage)) {
-    			unlink($imgPath.$newImage); //remove the file
-			}
-			move_uploaded_file($_FILES['image']['tmp_name'], $imgPath.$newImage);
-		} */
-		
-		/* //check for new author
-		if(!is_numeric($_POST['author'])){
-			$sql = 'insert into author(name) values(?)';
-			$stmt = $mysqli->prepare($sql);
-			$stmt->bind_param('s', $_POST['author']);
-			$stmt->execute();
-			$_POST['author'] = $stmt->insert_id;
-			$stmt->close();
-
-			$reloadPage = true;
-		} */
-		
-		$sql = "
-		insert into category(Name)
-		VALUES(?)
-		";
-
-		$data = array($_POST['Name']);
-
-	/* 	if($newImage) $data[] = $newImage;
-
-		$binding = 'sisdii'.(($newImage)?"s":""); */
+		require('dbconnect.php');
+		$sql = "insert into category(Name) VALUES(?)";
 
 		$stmt = $mysqli->prepare($sql);
-		$stmt->bind_param($binding, ...$data);
+		$stmt->bind_param('s', $_POST['name']);
 		$stmt->execute();
-		//echo $stmt->insert_id;
 		$stmt->close();
-		echo $reloadPage;
 		exit();
 	}
 	else if(isset($_POST['deleteCategorySubmit'])){
 		require('dbconnect.php');
-		$sql = "
-		delete from category where ID=?
-		";
+
+		$sql = "delete from category where ID=?";
+
 		$stmt = $mysqli->prepare($sql);
 		$stmt->bind_param('i', $_POST['id']);
 		$stmt->execute();
-		echo $stmt->affected_rows;
+		//echo $stmt->affected_rows;
 		$stmt->close();
+		echo $reloadPage;
 		exit();
 	}
 	else if(isset($_GET['loadCategories'])){
@@ -102,8 +43,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WITH
 		$search = $_POST['search']['value'];
 		$order = ( array_key_exists('order', $_POST) )? $_POST['columns'][$_POST['order'][0]['column']]['data'] : '';
 		$orderDir = ( array_key_exists('order', $_POST) )? $_POST['order'][0]['dir'] : '';
-
-		//get total count of all records
+		
+		//get total count of all records - entries at the navigation menu at the bottom of the page
 		$sql = 'select count(*) as "total" from category';
 		if ( $res = $mysqli->query($sql) ) {
 			$row = $res->fetch_assoc();
@@ -113,13 +54,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WITH
 			$total = 0;
 		}
 
-		$sql = "
-		select * 
-		from category 
-		where CONCAT_WS(' ', Name) LIKE '%$search%'
-		".(($order)?"order by $order $orderDir":"")."
-		LIMIT $start, $length
-		";
+		$sql = "select * from category where CONCAT_WS(' ', Name) LIKE '%$search%'".(($order)?"order by $order $orderDir":"")." LIMIT $start, $length";
+		
 		$data = array();
 		if ( $res = $mysqli->query($sql) ) {
 			$index = 1;
@@ -153,15 +89,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WITH
 if(!isset($_SESSION['is_admin']) || $_SESSION['is_admin']==0) {
 	die("You are not admin");
 }
-
-/* //get authors for list
-$sql = 'select * from author ORDER BY name';
-$authors = array();
-if ( $res = $mysqli->query($sql) ) {
-	while($row = $res->fetch_assoc()){
-		$authors[] = $row;
-	}
-} */
 
 //get book categories for list
 $sql = 'select * from category order by Name';
@@ -201,7 +128,7 @@ if ( $res = $mysqli->query($sql) ) {
 					<div class="form-row">
 						<div class="form-group col">
 							<label for="addCategoryModal_name">Category Name (*)</label>
-							<input type="text" class="form-control" id="addCategoryModal_name" required name="Name">
+							<input type="text" class="form-control" id="addCategoryModal_name" required name="name">
 						</div>
 					</div>
 				</form>
