@@ -1,12 +1,13 @@
 <?php
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'){
+	
 	if(isset($_POST['editCategorySubmit'])){
 		require('dbconnect.php');
 		$reloadPage = false;	
 	
 		$sql = "update category set Name=? where ID=?";
 		$stmt = $mysqli->prepare($sql);
-		$stmt->bind_param('si', $_POST['Name'], $_POST['id']);
+		$stmt->bind_param('si', $_POST['name'], $_POST['id']);
 		$stmt->execute();
 		$stmt->close();
 		echo $reloadPage;

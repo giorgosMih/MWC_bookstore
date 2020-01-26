@@ -601,12 +601,12 @@ $(document).ready(function(){
 
 	//edit category - start
 	//button edit category was clicked from category list
-	$(document).on('click', 'button.btn-category-edit', function(e){
+	$(document).on('click', 'button.btn-edit', function(e){
 		var rowIdx = $($(e.target).parents('tr')[0]).index();// clicked row index
 		var row = table.rows(rowIdx).data()[0];// clicked row data
 		
 		//fill in edit form fields with clicked row data
-		$('#editCategoryModal_category').val(row.id);
+		$('#editCategoryModal_name').val(row.Name); //editCategoryModal_category
 
 		var id = $(e.target).data('id');//get category ID
 		$('#editCategoryModal_CategoryID').val(id);//add category ID to hidden field in edit form
@@ -638,7 +638,6 @@ $(document).ready(function(){
 				table.ajax.reload();//on success, refresh category list to get new data
 			}
 			$('#editCategoryForm')[0].reset();
-			$('#editCategoryModal_author').val(null).trigger('change');
 			$('#editCategoryModal').modal('hide');//hide the edit category modal
 			toastr["success"]("","The category has been updated successfully!");//show message to user
 		})
@@ -656,7 +655,7 @@ $(document).ready(function(){
 
 	//delete category - start
 	//button delete category was clicked from category list
-	$(document).on('click', 'button.btn-category-delete', function(e){
+	$(document).on('click', 'button.btn-delete', function(e){
 		var id = $(e.target).data('id');//get category ID
 		$('#deleteCategoryModal_categoryID').val(id);//add category ID to hidden field in delete form
 		$('#deleteCategoryModal').modal('show');//show modal with edit form
