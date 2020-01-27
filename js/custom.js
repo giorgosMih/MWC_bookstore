@@ -831,3 +831,178 @@ $(document).ready(function(){
 		
 	});
 	}
+
+	//==================================================================
+//==================================================================
+//==================================================================
+ /**
+ * ==========================
+ * 7 - Author Management Page
+ * ==========================
+ */
+if( $('#pageAuthorManageContainer').length ){
+	$(document).ready(function(){
+		var select2_opts = {
+			tags: true,
+			placeholder: 'Choose or add new...',
+			theme: 'bootstrap4'
+		};
+	
+	
+		//initialize author datatable
+		var table = $('#authorsTable').DataTable({
+			"paging": true,
+			"lengthChange": true,
+			"pageLength": 10,
+			"lengthMenu": [
+			[5, 10, 20, 50, -1],
+			[5, 10, 20, 50, "All"]
+			],
+			"autoWidth": true,
+			"processing": true,
+			"serverSide": true,
+			"pagingType": "full_numbers",
+			"columnDefs": [{
+				"orderable": false,
+				"searchable": false,
+				"targets": [0,2] //3 columns
+			}],
+			"order": [],
+			"ajax": {
+				"url": "internal/author_manage.php?loadAuthors",
+				"method": "POST",
+				"data": function(d) {
+					return d;
+				}
+			},
+			"columns": [
+			{"data": "index"},
+			{"data": "name"},
+			{"data": "actions"}
+			],
+			dom: '<"row mx-1" <"#custom-btns.mr-auto"> <"ml-auto" f>><"clear">rtilp'
+		});
+	
+		//add author - start
+		var createBtn = $('<button data-toggle="modal" data-target="#addAuthorModal" class="btn btn-outline-success btn-sm mb-1" title="Add Author"><img src="img/controls/create.png" alt="Add New">New Author</button>');
+		$('#custom-btns').append(createBtn);//add create author button to datatable DOM
+	
+		//author add form submit
+		$(document).on('submit', '#addAuthorForm', function(e){
+			e.preventDefault();//stop original event
+	
+			var formData = $(e.target).serialize() + '&addAuthorSubmit';
+			$('#addAuthorForm input,select,textarea,button').prop('disabled', true);//disabled form fields for preventing editing
+			//send data with ajax
+			$.ajax({
+				url: 'internal/author_manage.php',
+				type: 'POST',
+				data: formData
+			})
+			.done(function(res) {
+				table.ajax.reload();//on success, refresh author list to get new data
+				$('#addAuthorForm')[0].reset();
+				$('#addAuthorModal').modal('hide');//hide the edit author modal
+				toastr["success"]("","The author has been inserted successfully!");//show message to user
+			})
+			.fail(function(err) {
+				console.log(err);//on error, log the error
+				toastr["error"]("The author's insertion failed.", "Insert Error");//show message to user
+			})
+			.always(function() {
+				$('#addAuthorForm input,select,textarea,button').prop('disabled', false);//always re-enable the fields for next use
+			});
+			
+		});
+		//add author - end
+	
+	
+		//edit author - start
+		//button edit author was clicked from author list
+		$(document).on('click', 'button.btn-edit', function(e){
+			var rowIdx = $($(e.target).parents('tr')[0]).index();// clicked row index
+			var row = table.rows(rowIdx).data()[0];// clicked row data
+			
+			//fill in edit form fields with clicked row data
+			$('#editAuthorModal_name').val(row.name);
+	
+			var id = $(e.target).data('id');//get author ID
+			$('#editAuthorModal_authorID').val(id);//add author ID to hidden field in edit form
+			$('#editAuthorModal').modal('show');//show modal with edit form
+		});
+	
+		//author edit form submit
+		$(document).on('submit', '#editAuthorForm', function(e){
+			e.preventDefault();//stop original event
+	
+			var formData = $(e.target).serialize() + '&editAuthorSubmit';
+			$('#editAuthorForm input,select,textarea,button').prop('disabled', true);//disabled edit form fields for preventing editing
+			
+			//send updated data with ajax
+			$.ajax({
+				url: 'internal/author_manage.php',
+				type: 'POST',
+				data: formData
+			})
+			.done(function(res) {
+				table.ajax.reload();//on success, refresh author list to get new data
+				$('#editAuthorForm')[0].reset();
+				$('#editAuthorModal').modal('hide');//hide the edit author modal
+				toastr["success"]("","The author has been updated successfully!");//show message to user
+			})
+			.fail(function(err) {
+				console.log(err);//on error, log the error
+				toastr["error"]("The author's update failed.", "Update Error");//show message to user
+			})
+			.always(function() {
+				$('#editAuthorForm input,select,textarea,button').prop('disabled', false);//always re-enable the fields for next use
+			});
+			
+		});
+		//edit author - end
+		
+	
+		//delete author - start
+		//button delete author was clicked from author list
+		$(document).on('click', 'button.btn-delete', function(e){
+			var id = $(e.target).data('id');//get author ID
+			$('#deleteAuthorModal_authorID').val(id);//add author ID to hidden field in delete form
+			$('#deleteAuthorModal').modal('show');//show modal with edit form
+		});
+	
+		//author delete form submit
+		$(document).on('submit', '#deleteAuthorForm', function(e){
+			e.preventDefault();//stop original event
+	
+			var formData = $(e.target).serialize() + '&deleteAuthorSubmit';//get form data and append identifier for serverside handling
+	
+			//send updated data with ajax
+			$.ajax({
+				url: 'internal/author_manage.php',
+				type: 'POST',
+				data: formData
+			})
+			.done(function(res) {
+				console.log('Affected Rows: ' + res);
+				table.ajax.reload();//on success, refresh author list to get updated data
+				$('#deleteAuthorForm')[0].reset();
+				toastr["success"]("","The author has been deleted successfully!");//show message to user
+			})
+			.fail(function(err) {
+				console.log(err);//on error, log the error
+				toastr["error"]("The author's deletion failed.", "Delete Error");//show message to user
+			})
+			.always(function(){
+				$('#deleteAuthorModal').modal('hide');//hide the delete author modal
+			});
+			
+		});
+		//delete author - end
+		
+	});
+	}
+	/**
+	 * ==========================
+	 * end - Author Management Page
+	 * ==========================
+	 */
