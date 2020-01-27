@@ -609,7 +609,7 @@ $(document).ready(function(){
 		$('#editCategoryModal_name').val(row.Name); //editCategoryModal_category
 
 		var id = $(e.target).data('id');//get category ID
-		$('#editCategoryModal_CategoryID').val(id);//add category ID to hidden field in edit form
+		$('#editCategoryModal_categoryID').val(id);//add category ID to hidden field in edit form
 		$('#editCategoryModal').modal('show');//show modal with edit form
 	});
 
@@ -617,26 +617,17 @@ $(document).ready(function(){
 	$(document).on('submit', '#editCategoryForm', function(e){
 		e.preventDefault();//stop original event
 
-		var formData = new FormData(e.target);
-		formData.append('editCategorySubmit',null);
+		var formData = $(e.target).serialize() + '&editCategorySubmit';
 		$('#editCategoryForm input,select,textarea,button').prop('disabled', true);//disabled edit form fields for preventing editing
 		
 		//send updated data with ajax
 		$.ajax({
 			url: 'internal/category_manage.php',
 			type: 'POST',
-			cache: false,
-			contentType: false,
-			processData: false,
 			data: formData
 		})
 		.done(function(res) {
-			if(res){
-				window.location.reload();
-			}
-			else{
-				table.ajax.reload();//on success, refresh category list to get new data
-			}
+			table.ajax.reload();//on success, refresh category list to get new data
 			$('#editCategoryForm')[0].reset();
 			$('#editCategoryModal').modal('hide');//hide the edit category modal
 			toastr["success"]("","The category has been updated successfully!");//show message to user

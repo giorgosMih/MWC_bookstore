@@ -10,7 +10,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WITH
 		$stmt->bind_param('si', $_POST['name'], $_POST['id']);
 		$stmt->execute();
 		$stmt->close();
-		echo $reloadPage;
 		exit();
 	}
 	else if(isset($_POST['addCategorySubmit'])){
