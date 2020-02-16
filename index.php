@@ -59,6 +59,9 @@ if(isset($_REQUEST['p']) && $_REQUEST['p'] != 'products' && $_REQUEST['p'] != 'p
             <li class="nav-item<?php if($_SERVER['QUERY_STRING'] == 'p=orders_manage') echo ' active';?>">
               <a class="nav-link" href="?p=orders_manage">Order Management</a>
             </li>
+	<li class="nav-item<?php if($_SERVER['QUERY_STRING'] == 'p=coupon_manage') echo ' active';?>">
+              <a class="nav-link" href="?p=coupon_manage">Coupon Management</a>
+            </li>
 			
             <li class="nav-item">
               <a class="nav-link" href="?p=logout">Logout</a>
@@ -117,7 +120,7 @@ if( ! isset($_REQUEST['p'])) {
 }
 $p = $_REQUEST['p'];
 
-$pages = array('start','shopinfo','login','do_login','after_login','logout','myinfo','contact','products','cart','catinfo','productinfo','add_cart','empty_cart','buy_cart', 'orders_manage', 'book_manage', 'search_box', 'category_manage', 'author_manage');
+$pages = array('start','shopinfo','login','do_login','after_login','logout','myinfo','contact','products','cart','catinfo','productinfo','add_cart','empty_cart','buy_cart', 'orders_manage', 'book_manage', 'search_box', 'category_manage', 'author_manage', 'coupon_manage');
 
 $ok=false;
 foreach($pages as $pp) {
