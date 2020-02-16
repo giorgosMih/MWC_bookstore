@@ -7,6 +7,8 @@
  * 4 - Global functions
  * 5 - Category Management Page
  * 6 - Author Management Page
+ *
+ * 8 - Coupon Management Page
  */
 
 
@@ -1004,5 +1006,184 @@ if( $('#pageAuthorManageContainer').length ){
 	/**
 	 * ==========================
 	 * end - Author Management Page
+	 * ==========================
+	 */
+/**
+ * ==========================
+ * 8 - Coupon Management Page
+ * ==========================
+ */
+if( $('#pageCouponManageContainer').length ){
+	$(document).ready(function(){
+		var select2_opts = {
+			tags: true,
+			placeholder: 'Choose or add new...',
+			theme: 'bootstrap4'
+		};
+
+		//initialize Coupon datatable
+		var table = $('#couponsTable').DataTable({
+			"paging": true,
+			"lengthChange": true,
+			"pageLength": 10,
+			"lengthMenu": [
+			[5, 10, 20, 50, -1],
+			[5, 10, 20, 50, "All"]
+			],
+			"autoWidth": true,
+			"processing": true,
+			"serverSide": true,
+			"pagingType": "full_numbers",
+			"columnDefs": [{
+				"orderable": false,
+				"searchable": false,
+				"targets": [0,2] //3 columns
+			}],
+			"order": [],
+			"ajax": {
+				"url": "internal/coupon_manage.php?loadCoupons",
+				"method": "POST",
+				"data": function(d) {
+					return d;
+				}
+			},
+			"columns": [
+			{"data": "coupon_id"},
+			{"data": "code"},
+			{"data": "discount"},
+			{"data": "is_enable"},
+			{"data": "total_usage"},
+			{"data": "valid_from"},
+			{"data": "valid_to"},
+			{"data": "actions"}
+			],
+			dom: '<"row mx-1" <"#custom-btns.mr-auto"> <"ml-auto" f>><"clear">rtilp'
+		});
+		//add Coupon - start
+		var createBtn = $('<button data-toggle="modal" data-target="#addcouponModal" class="btn btn-outline-success btn-sm mb-1" title="Add Coupon"><img src="img/controls/create.png" alt="Add New">New Coupon</button>');
+		$('#custom-btns').append(createBtn);//add create Coupon button to datatable DOM
+	
+		//Coupon add form submit
+		$(document).on('submit', '#addcouponForm', function(e){
+			e.preventDefault();//stop original event
+	
+			var formData = $(e.target).serialize() + '&addCouponSubmit';
+			$('#addcouponForm input,select,textarea,button').prop('disabled', true);//disabled form fields for preventing editing
+			//send data with ajax
+			$.ajax({
+				url: 'internal/coupon_manage.php',
+				type: 'POST',
+				data: formData
+			})
+			.done(function(res) {
+				table.ajax.reload();//on success, refresh Coupon list to get new data
+				$('#addcouponForm')[0].reset();
+				$('#addcouponModal').modal('hide');//hide the edit Coupon modal
+				toastr["success"]("","The Coupon has been inserted successfully!");//show message to user
+			})
+			.fail(function(err) {
+				console.log(err);//on error, log the error
+				toastr["error"]("The Coupon's insertion failed.", "Insert Error");//show message to user
+			})
+			.always(function() {
+				$('#addcouponForm input,select,textarea,button').prop('disabled', false);//always re-enable the fields for next use
+			});
+			
+		});
+		//add Coupon - end
+	
+	
+		//edit Coupon - start
+		//button edit Coupon was clicked from Coupon list
+		$(document).on('click', 'button.btn-edit', function(e){
+			var rowIdx = $($(e.target).parents('tr')[0]).index();// clicked row index
+			var row = table.rows(rowIdx).data()[0];// clicked row data
+			
+			//fill in edit form fields with clicked row data
+			$('#editcouponModal_code').val(row.code);
+			$('#editcouponModal_discount').val(row.discount);
+			$('#editcouponModal_is_enable').val(row.is_enable);
+			$('#editcouponModal_total_usage').val(row.total_usage);
+			$('#editcouponModal_valid_from').val(row.valid_from);
+			$('#editcouponModal_valid_to').val(row.valid_to);
+	
+			var id = $(e.target).data('id');//get Coupon ID
+			$('#editcouponModal_couponID').val(id);//add Coupon ID to hidden field in edit form
+			$('#editcouponModal').modal('show');//show modal with edit form
+		});
+	
+		//Coupon edit form submit
+		$(document).on('submit', '#editcouponForm', function(e){
+			e.preventDefault();//stop original event
+	
+			var formData = $(e.target).serialize() + '&editCouponSubmit';
+			$('#editcouponForm input,select,textarea,button').prop('disabled', true);//disabled edit form fields for preventing editing
+			
+			//send updated data with ajax
+			$.ajax({
+				url: 'internal/coupon_manage.php',
+				type: 'POST',
+				data: formData
+			})
+			.done(function(res) {
+				table.ajax.reload();//on success, refresh Coupon list to get new data
+				$('#editcouponForm')[0].reset();
+				$('#editcouponModal').modal('hide');//hide the edit Coupon modal
+				toastr["success"]("","The coupon has been updated successfully!");//show message to user
+			})
+			.fail(function(err) {
+				console.log(err);//on error, log the error
+				toastr["error"]("The coupon's update failed.", "Update Error");//show message to user
+			})
+			.always(function() {
+				$('#editcouponForm input,select,textarea,button').prop('disabled', false);//always re-enable the fields for next use
+			});
+			
+		});
+		//edit Coupon - end
+		
+	
+		//delete Coupon - start
+		//button delete Coupon was clicked from Coupon list
+		$(document).on('click', 'button.btn-delete', function(e){
+			var id = $(e.target).data('id');//get Coupon ID
+			$('#deletecouponModal_couponID').val(id);//add Coupon ID to hidden field in delete form
+			$('#deletecouponModal').modal('show');//show modal with edit form
+		});
+	
+		//Coupon delete form submit
+		$(document).on('submit', '#deletecouponForm', function(e){
+			e.preventDefault();//stop original event
+	
+			var formData = $(e.target).serialize() + '&deleteCouponSubmit';//get form data and append identifier for serverside handling
+	
+			//send updated data with ajax
+			$.ajax({
+				url: 'internal/coupon_manage.php',
+				type: 'POST',
+				data: formData
+			})
+			.done(function(res) {
+				console.log('Affected Rows: ' + res);
+				table.ajax.reload();//on success, refresh Coupon list to get updated data
+				$('#deletecouponForm')[0].reset();
+				toastr["success"]("","The Coupon has been deleted successfully!");//show message to user
+			})
+			.fail(function(err) {
+				console.log(err);//on error, log the error
+				toastr["error"]("The Coupon's deletion failed.", "Delete Error");//show message to user
+			})
+			.always(function(){
+				$('#deletecouponModal').modal('hide');//hide the delete Coupon modal
+			});
+			
+		});
+		//delete Coupon - end*/
+		
+	});
+	}
+	/**
+	 * ==========================
+	 * end - Coupon Management Page
 	 * ==========================
 	 */
