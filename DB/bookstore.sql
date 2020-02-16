@@ -77,6 +77,29 @@ INSERT INTO `category` (`ID`, `Name`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `coupon`
+--
+
+CREATE TABLE `coupon` (
+  `coupon_id` int(11) NOT NULL,
+  `code` varchar(15) NOT NULL,
+  `discount` int(11) NOT NULL,
+  `is_enable` tinyint(1) NOT NULL,
+  `valid_from` date NOT NULL,
+  `valid_to` date NOT NULL,
+  `total_usage` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Дамп данных таблицы `coupon`
+--
+
+INSERT INTO `coupon` (`coupon_id`, `code`, `discount`, `is_enable`, `valid_from`, `valid_to`, `total_usage`) VALUES
+(1, '0B5enJqwmM', 12, 0, '2020-01-23', '2020-01-25', 30),
+(5, 'LynKl@ncM6', 92, 1, '2020-01-23', '2020-02-01', 20),
+(6, '5ECDyxdaAz', 42, 1, '2020-01-23', '2020-01-26', 100);
+
+--
 -- Table structure for table `customer`
 --
 
