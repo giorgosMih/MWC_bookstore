@@ -32,7 +32,6 @@ foreach ($_SESSION["cart"] as $product => $q){
 		$stmt->execute();
 		$result = $stmt->get_result();
 		$row = $result->fetch_assoc();
-		//print "<tr><td>$row[Title]  </td><td> $q * {$row['Price']}&euro; </td><td>=" . ($q * $row['Price']) . "&euro; </td></tr>";
 		$sum += ($q * $row['Price']);
 		$c++;
 ?>
@@ -40,23 +39,23 @@ foreach ($_SESSION["cart"] as $product => $q){
 <td>
 <img src='<?php echo "img/".$row["image"]; ?>' width="50" height="40" />
 </td>
-<td><?php echo $row[Title]; ?><br />
+<td><?php echo $row['Title']; ?><br />
 <form method='post' action=''>
-<input type='hidden' name='code' value="<?php echo $row[ID]; ?>" />
+<input type='hidden' name='code' value="<?php echo $row['ID']; ?>" />
 <input type='hidden' name='action' value="remove" />
 <button type='submit' class='remove'>Remove Item</button>
 </form>
 </td>
 <td>
 
-	<input id='qty' type='number' min='1' step='1' value='<?=$q ?>' name='qty' onclick="myFunction(<?=$row[ID]?>, this);">
+	<input id='qty' type='number' min='1' step='1' value='<?=$q ?>' name='qty' onclick="myFunction(<?=$row['ID']?>, this);">
 </td>
 <td><?php echo "&euro;".$row['Price']; ?></td>
 <td><?php echo "&euro;".$q * $row['Price']; ?></td>
 </tr>
 <?php
-
 }
+$stmt->close();
 ?>
 <tr>
 <td colspan="5" align="right">
@@ -70,11 +69,13 @@ foreach ($_SESSION["cart"] as $product => $q){
 </div>
  
 <div style="clear:both;"></div>
- 
+
+<?php if(isset($status)):?>
 <div class="message_box" style="margin:10px 0px;">
 <?php echo $status; ?>
 </div>
-<table>
+<?php endif;?>
+
 <?php
 		if($c==0) {
 			print "<tr><td colspan='3'>Your shopping cart is empty :-(</td></tr>";
@@ -100,24 +101,23 @@ function add_cart(e, pid) {
 }
 
 function myFunction(id, elem) {
-	window.location="/internal/update_cart.php?product=" + id + "&q=" + elem.value;
-	// alert(id + ' ' + elem.value);
+	window.location="index.php?p=update_cart&product=" + id + "&q=" + elem.value;
 	
 }
 </script>
-<?
+<?php
 if (isset($_POST['action']) && $_POST['action']=="remove"){
 	if(!empty($_SESSION["cart"])) {
 		foreach($_SESSION["cart"] as $key => $value) {
 		  if($_POST["code"] == $key){
-		  unset($_SESSION["cart"][$key]);
-		  $status = "<div class='box' style='color:red;'>
-		  Product is removed from your cart!</div>";
-		  echo '<script>window.location.reload(true);</script>';
+		  	unset($_SESSION["cart"][$key]);
+		  	$status = "<div class='box' style='color:red;'>
+		  	Product is removed from your cart!</div>";
+		  	echo '<script>window.location.reload(true);</script>';
 		  }
 		  if(empty($_SESSION["cart"]))
-		  unset($_SESSION["cart"]);
-		  } 
+		  	unset($_SESSION["cart"]);
+		} 
 	}
-	}
+}
 ?>

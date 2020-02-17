@@ -120,7 +120,7 @@ if( ! isset($_REQUEST['p'])) {
 }
 $p = $_REQUEST['p'];
 
-$pages = array('start','shopinfo','login','do_login','after_login','logout','myinfo','contact','products','cart','catinfo','productinfo','add_cart','empty_cart','buy_cart', 'orders_manage', 'book_manage', 'search_box', 'category_manage', 'author_manage', 'coupon_manage');
+$pages = array('start','shopinfo','login','do_login','after_login','logout','myinfo','contact','products','cart','catinfo','productinfo','add_cart','empty_cart','buy_cart', 'orders_manage', 'book_manage', 'search_box', 'category_manage', 'author_manage', 'coupon_manage','update_cart');
 
 $ok=false;
 foreach($pages as $pp) {
